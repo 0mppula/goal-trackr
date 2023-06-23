@@ -2,8 +2,6 @@ import Nav from '@/components/Nav';
 import SessionProvider from '@/components/SessionProvider';
 import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { getServerSession } from 'next-auth';
 import { Inter } from 'next/font/google';
 import './globals.css';
 
@@ -15,8 +13,6 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-	const session = await getServerSession(authOptions);
-
 	return (
 		<html lang="en">
 			<body
@@ -26,7 +22,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 				)}
 			>
 				<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-					<SessionProvider session={session}>
+					<SessionProvider>
 						<Nav />
 						{children}
 					</SessionProvider>
