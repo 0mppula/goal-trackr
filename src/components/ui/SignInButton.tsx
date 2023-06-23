@@ -4,7 +4,7 @@ import { Button } from './button';
 
 interface SignInButtonProps {}
 
-const SignInButton = async ({}: SignInButtonProps) => {
+const SignInButton = ({}: SignInButtonProps) => {
 	return <Button onClick={() => signIn('google')}>Sign In</Button>;
 };
 
