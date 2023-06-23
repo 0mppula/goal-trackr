@@ -2,6 +2,7 @@ import Link from 'next/link';
 import React from 'react';
 import { Button } from './ui/button';
 import ThemeToggler from './ThemeToggler';
+import SignInButton from './ui/SignInButton';
 
 const Nav = () => {
 	return (
@@ -13,7 +14,7 @@ const Nav = () => {
 			<div className="flex items-center gap-4">
 				<ThemeToggler />
 
-				<Button>Sign In</Button>
+				<SignInButton />
 			</div>
 		</nav>
 	);

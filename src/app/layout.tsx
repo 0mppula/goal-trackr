@@ -1,8 +1,11 @@
 import Nav from '@/components/Nav';
-import './globals.css';
-import { Inter } from 'next/font/google';
-import { cn } from '@/lib/utils';
+import SessionProvider from '@/components/SessionProvider';
 import { ThemeProvider } from '@/components/theme-provider';
+import { cn } from '@/lib/utils';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
+import { getServerSession } from 'next-auth';
+import { Inter } from 'next/font/google';
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -11,7 +14,9 @@ export const metadata = {
 	description: 'A free goal tracking application',
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+	const session = await getServerSession(authOptions);
+
 	return (
 		<html lang="en">
 			<body
@@ -21,8 +26,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 				)}
 			>
 				<ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-					<Nav />
-					{children}
+					<SessionProvider session={session}>
+						<Nav />
+						{children}
+					</SessionProvider>
 				</ThemeProvider>
 			</body>
 		</html>
