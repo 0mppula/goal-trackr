@@ -7,7 +7,7 @@ const Nav = () => {
 	return (
 		<nav className="flex justify-between items-center border-b-2 border-slate-200 dark:border-slate-800 p-4">
 			<Button variant="link" asChild>
-				<Link href="/">GoalStackr</Link>
+				<Link href="/">GoalTrackr</Link>
 			</Button>
 
 			<div className="flex items-center gap-4">
