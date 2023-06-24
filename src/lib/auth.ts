@@ -11,3 +11,11 @@ export function getGoogleCredentials(): { clientId: string; clientSecret: string
 
 	return { clientId, clientSecret };
 }
+
+export function getMongoUri() {
+	const Uri = process.env.MONGO_URI;
+
+	if (!Uri) throw new Error('Missing MONGO_URI');
+
+	return Uri;
+}
