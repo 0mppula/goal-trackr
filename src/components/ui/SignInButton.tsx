@@ -12,6 +12,7 @@ const SignInButton = () => {
 			setLoading(true);
 			await signIn('google');
 		} catch (error) {
+			// TOAST ME
 			console.error('Error signing in');
 		}
 	};

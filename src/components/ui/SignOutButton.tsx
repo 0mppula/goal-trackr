@@ -14,6 +14,7 @@ const SignOutButton = ({}: SignOutButtonProps) => {
 			setLoading(true);
 			await signOut();
 		} catch (error) {
+			// TOAST ME
 			console.error('Error signing out');
 		}
 	};
