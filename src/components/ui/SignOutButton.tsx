@@ -1,11 +1,27 @@
 'use client';
+
 import { signOut } from 'next-auth/react';
-import { Button } from './button';
+import { useState } from 'react';
+import ButtonLoading from './ButtonLoading';
 
 interface SignOutButtonProps {}
 
 const SignOutButton = ({}: SignOutButtonProps) => {
-	return <Button onClick={() => signOut()}>Sign Out</Button>;
+	const [loading, setLoading] = useState(false);
+
+	const handlesignOut = async () => {
+		try {
+			setLoading(true);
+			await signOut();
+		} catch (error) {
+			console.error('Error signing out');
+		}
+	};
+	return (
+		<ButtonLoading onClick={handlesignOut} disabled={loading}>
+			Sign Out
+		</ButtonLoading>
+	);
 };
 
 export default SignOutButton;

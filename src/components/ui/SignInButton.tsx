@@ -1,11 +1,26 @@
 'use client';
+
 import { signIn } from 'next-auth/react';
-import { Button } from './button';
+import { useState } from 'react';
+import ButtonLoading from './ButtonLoading';
 
-interface SignInButtonProps {}
+const SignInButton = () => {
+	const [loading, setLoading] = useState(false);
 
-const SignInButton = ({}: SignInButtonProps) => {
-	return <Button onClick={() => signIn('google')}>Sign In</Button>;
+	const handleSignIn = async () => {
+		try {
+			setLoading(true);
+			await signIn('google');
+		} catch (error) {
+			console.error('Error signing in');
+		}
+	};
+
+	return (
+		<ButtonLoading onClick={handleSignIn} loading={loading}>
+			Sign In
+		</ButtonLoading>
+	);
 };
 
 export default SignInButton;
