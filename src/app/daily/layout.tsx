@@ -1,3 +1,10 @@
-export default function Layout({ children }: { children: React.ReactNode }) {
-	return <section className="pt-20">{children}</section>;
-}
+export const metadata = {
+	title: 'Daily Goals – GoalStackr',
+	description: 'A free goal tracking application',
+};
+
+const layout = ({ children }: { children: React.ReactNode }) => {
+	return <div className="py-20">{children}</div>;
+};
+
+export default layout;
