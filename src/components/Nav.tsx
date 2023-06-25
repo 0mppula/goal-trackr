@@ -19,11 +19,17 @@ const Nav = async () => {
 				<div className="flex items-center gap-4">
 					<ThemeToggler />
 
-					<Button variant="ghost" asChild>
-						<Link href="daily">Daily Goals</Link>
-					</Button>
+					{session ? (
+						<>
+							<Button variant="ghost" asChild>
+								<Link href="daily">Daily Goals</Link>
+							</Button>
 
-					{session ? <SignOutButton /> : <SignInButton />}
+							<SignOutButton />
+						</>
+					) : (
+						<SignInButton />
+					)}
 				</div>
 			</div>
 		</nav>
