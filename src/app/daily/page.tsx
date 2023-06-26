@@ -1,3 +1,7 @@
+import GoalDay from '@/components/GoalDay';
+import goalDays from '@/data/mockGoals.json';
+import moment from 'moment';
+
 const page = () => {
 	return (
 		<div className="container pt-8">
@@ -5,13 +9,12 @@ const page = () => {
 				My Daily Goals
 			</h1>
 
-			<div className="flex flex-col justify-center items-center gap-y-4 max-w-3xl mx-auto">
-				{Array.from({ length: 15 }).map((item, i) => (
-					<div key={i} className="p-4 border-2 rounded-md w-full">
-						{i + 1}. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Qui,
-						exercitationem.
-					</div>
-				))}
+			<div className="flex flex-col justify-center items-center gap-y-8 max-w-3xl mx-auto divide-y-4 divide-slate-800">
+				{goalDays
+					.sort((a, b) => moment.utc(a.createdAt).diff(moment.utc(b.createdAt)))
+					.map((goalDay, i) => (
+						<GoalDay key={i} goalDay={goalDay} />
+					))}
 			</div>
 		</div>
 	);

@@ -21,6 +21,7 @@
     "eslint": "8.43.0",
     "eslint-config-next": "13.4.7",
     "lucide-react": "^0.249.0",
+    "moment": "^2.29.4",
     "mongoose": "^7.3.1",
     "next": "13.4.7",
     "next-auth": "^4.22.1",
