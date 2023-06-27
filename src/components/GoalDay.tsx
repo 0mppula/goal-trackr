@@ -20,12 +20,7 @@ const GoalDay = ({ goalDay }: GoalDayProps) => {
 				</h2>
 
 				{goalDay.goals.map((goal) => (
-					<GoalItem
-						key={goal._id}
-						goal={goal}
-						editedGoal={editedGoal}
-						setEditedGoal={setEditedGoal}
-					/>
+					<GoalItem key={goal._id} goal={goal} setEditedGoal={setEditedGoal} />
 				))}
 
 				<GoalDayForm editedGoal={editedGoal} setEditedGoal={setEditedGoal} />

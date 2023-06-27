@@ -73,6 +73,7 @@ const GoalDayForm = ({ editedGoal, setEditedGoal }: GoalDayFormProps) => {
 				)}
 
 				<div className="flex gap-4">
+					{/* Add button */}
 					{addingGoal && (
 						<>
 							<Button
@@ -88,6 +89,7 @@ const GoalDayForm = ({ editedGoal, setEditedGoal }: GoalDayFormProps) => {
 						</>
 					)}
 
+					{/* Edit button */}
 					{editedGoal && (
 						<>
 							<Button

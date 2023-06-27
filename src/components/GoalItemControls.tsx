@@ -12,11 +12,10 @@ import { GoalType } from '@/types/goal';
 
 interface GoalItemControlsProps {
 	goal: GoalType;
-	editedGoal: GoalType | null;
 	setEditedGoal: React.Dispatch<React.SetStateAction<GoalType | null>>;
 }
 
-const GoalItemControls = ({ goal, editedGoal, setEditedGoal }: GoalItemControlsProps) => {
+const GoalItemControls = ({ goal, setEditedGoal }: GoalItemControlsProps) => {
 	const [deleteLoading, setDeleteLoading] = useState(false);
 
 	const handleGoalDelete = () => {
