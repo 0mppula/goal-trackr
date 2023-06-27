@@ -12,7 +12,6 @@ import { Button } from './ui/button';
 interface GaolItemControlsProps {}
 
 const GaolItemControls = ({}: GaolItemControlsProps) => {
-	const [editLoading, setEditLoading] = useState(false);
 	const [deleteLoading, setDeleteLoading] = useState(false);
 
 	return (
@@ -25,17 +24,13 @@ const GaolItemControls = ({}: GaolItemControlsProps) => {
 			</DropdownMenuTrigger>
 
 			<DropdownMenuContent align="end">
-				<DropdownMenuItem className="flex gap-2" disabled={editLoading || deleteLoading}>
-					{editLoading ? (
-						<Loader2 className="h-[1.125rem] w-[1.125rem] animate-spin" />
-					) : (
-						<Edit2 className="h-[1.125rem] w-[1.125rem]" />
-					)}
+				<DropdownMenuItem className="flex gap-2" disabled={deleteLoading}>
+					<Edit2 className="h-[1.125rem] w-[1.125rem]" />
 					<span>Edit</span>
 					<span className="sr-only">Edit Goal</span>
 				</DropdownMenuItem>
 
-				<DropdownMenuItem className="flex gap-2" disabled={editLoading || deleteLoading}>
+				<DropdownMenuItem className="flex gap-2" disabled={deleteLoading}>
 					{deleteLoading ? (
 						<Loader2 className="h-[1.125rem] w-[1.125rem] animate-spin" />
 					) : (
