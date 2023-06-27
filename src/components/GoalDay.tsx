@@ -2,6 +2,7 @@ import { GoalDayType } from '@/types/goal';
 import moment from 'moment';
 import React from 'react';
 import GoalItem from './GoalItem';
+import GoalDayForm from './GoalDayForm';
 
 interface GoalDayProps {
 	goalDay: GoalDayType;
@@ -18,6 +19,8 @@ const GoalDay = ({ goalDay }: GoalDayProps) => {
 				{goalDay.goals.map((goal, index) => (
 					<GoalItem key={goal._id} goal={goal} index={index} />
 				))}
+
+				<GoalDayForm />
 			</div>
 		</>
 	);
