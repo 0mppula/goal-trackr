@@ -8,11 +8,20 @@ import {
 import { Edit2, Loader2, MoreVertical, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from './ui/button';
+import { GoalType } from '@/types/goal';
 
-interface GaolItemControlsProps {}
+interface GoalItemControlsProps {
+	goal: GoalType;
+	editedGoal: GoalType | null;
+	setEditedGoal: React.Dispatch<React.SetStateAction<GoalType | null>>;
+}
 
-const GaolItemControls = ({}: GaolItemControlsProps) => {
+const GoalItemControls = ({ goal, editedGoal, setEditedGoal }: GoalItemControlsProps) => {
 	const [deleteLoading, setDeleteLoading] = useState(false);
+
+	const handleGoalDelete = () => {
+		setEditedGoal(null);
+	};
 
 	return (
 		<DropdownMenu>
@@ -24,13 +33,21 @@ const GaolItemControls = ({}: GaolItemControlsProps) => {
 			</DropdownMenuTrigger>
 
 			<DropdownMenuContent align="end">
-				<DropdownMenuItem className="flex gap-2" disabled={deleteLoading}>
+				<DropdownMenuItem
+					className="flex gap-2"
+					disabled={deleteLoading}
+					onClick={() => setEditedGoal(goal)}
+				>
 					<Edit2 className="h-[1.125rem] w-[1.125rem]" />
 					<span>Edit</span>
 					<span className="sr-only">Edit Goal</span>
 				</DropdownMenuItem>
 
-				<DropdownMenuItem className="flex gap-2" disabled={deleteLoading}>
+				<DropdownMenuItem
+					className="flex gap-2"
+					disabled={deleteLoading}
+					onClick={handleGoalDelete}
+				>
 					{deleteLoading ? (
 						<Loader2 className="h-[1.125rem] w-[1.125rem] animate-spin" />
 					) : (
@@ -44,4 +61,4 @@ const GaolItemControls = ({}: GaolItemControlsProps) => {
 	);
 };
 
-export default GaolItemControls;
+export default GoalItemControls;
