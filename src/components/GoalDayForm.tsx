@@ -4,19 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
-import { GoalType } from '@/types/goal';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import ButtonLoading from './ui/ButtonLoading';
 
-interface GoalDayFormProps {
-	editedGoal: GoalType | null;
-	setEditedGoal: React.Dispatch<React.SetStateAction<GoalType | null>>;
-}
+interface GoalDayFormProps {}
 
-const GoalDayForm = ({ editedGoal, setEditedGoal }: GoalDayFormProps) => {
+const GoalDayForm = ({}: GoalDayFormProps) => {
 	const [loading, setLoading] = useState(false);
 	const [addingGoal, setAddingGoal] = useState(false);
 
@@ -28,18 +24,16 @@ const GoalDayForm = ({ editedGoal, setEditedGoal }: GoalDayFormProps) => {
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
+		defaultValues: { goal: '' },
 	});
 
 	useEffect(() => {
-		if (editedGoal) {
-			form.reset({ goal: editedGoal.text });
-			setAddingGoal(false);
-		} else {
-			form.reset({ goal: '' });
+		if (addingGoal) {
+			form.setFocus('goal');
 		}
-	}, [editedGoal]);
+	}, [addingGoal]);
 
-	function onSubmit(data: z.infer<typeof FormSchema>) {
+	const onSubmit = (data: z.infer<typeof FormSchema>) => {
 		toast({
 			title: 'You submitted the following values:',
 			description: (
@@ -49,15 +43,20 @@ const GoalDayForm = ({ editedGoal, setEditedGoal }: GoalDayFormProps) => {
 			),
 		});
 
-		if (editedGoal) {
-			setEditedGoal(null);
-		}
-	}
+		form.setFocus('goal');
+		form.reset({ goal: '' });
+	};
+
+	const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault();
+		setAddingGoal(false);
+		form.reset({ goal: '' });
+	};
 
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="mt-[1.5rem] w-full space-y-4">
-				{(addingGoal || editedGoal) && (
+				{addingGoal && (
 					<FormField
 						control={form.control}
 						name="goal"
@@ -73,39 +72,22 @@ const GoalDayForm = ({ editedGoal, setEditedGoal }: GoalDayFormProps) => {
 				)}
 
 				<div className="flex gap-4">
-					{/* Add button */}
-					{addingGoal && (
+					{addingGoal ? (
 						<>
 							<Button
 								variant="ghost"
+								type="button"
 								disabled={loading}
-								onClick={() => setAddingGoal(false)}
+								onClick={(e) => handleCancel(e)}
 							>
 								Cancel
 							</Button>
+
 							<ButtonLoading loading={loading} type="submit">
 								Add goal
 							</ButtonLoading>
 						</>
-					)}
-
-					{/* Edit button */}
-					{editedGoal && (
-						<>
-							<Button
-								variant="ghost"
-								disabled={loading}
-								onClick={() => setEditedGoal(null)}
-							>
-								Cancel
-							</Button>
-							<ButtonLoading loading={loading} type="submit">
-								Edit goal
-							</ButtonLoading>
-						</>
-					)}
-
-					{!addingGoal && !editedGoal && (
+					) : (
 						<Button onClick={() => setAddingGoal(true)}>New Goal</Button>
 					)}
 				</div>

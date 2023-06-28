@@ -18,7 +18,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 		<html lang="en">
 			<body
 				className={cn(
-					'min-h-screen bg-slate-50 dark:bg-slate-900 antialiased text-slate-800 dark:text-slate-200',
+					'min-h-screen bg-slate-100 dark:bg-slate-900 antialiased text-slate-800 dark:text-slate-200',
 					inter.className
 				)}
 			>

@@ -5,22 +5,20 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Edit2, Loader2, MoreVertical, Trash2 } from 'lucide-react';
-import { useState } from 'react';
-import { Button } from './ui/button';
 import { GoalType } from '@/types/goal';
+import { Edit2, Loader2, MoreVertical, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Button } from './ui/button';
 
 interface GoalItemControlsProps {
 	goal: GoalType;
-	setEditedGoal: React.Dispatch<React.SetStateAction<GoalType | null>>;
+	setEditingGoal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const GoalItemControls = ({ goal, setEditedGoal }: GoalItemControlsProps) => {
+const GoalItemControls = ({ goal, setEditingGoal }: GoalItemControlsProps) => {
 	const [deleteLoading, setDeleteLoading] = useState(false);
 
-	const handleGoalDelete = () => {
-		setEditedGoal(null);
-	};
+	const handleGoalDelete = () => {};
 
 	return (
 		<DropdownMenu>
@@ -35,7 +33,7 @@ const GoalItemControls = ({ goal, setEditedGoal }: GoalItemControlsProps) => {
 				<DropdownMenuItem
 					className="flex gap-2"
 					disabled={deleteLoading}
-					onClick={() => setEditedGoal(goal)}
+					onClick={() => setEditingGoal((prev) => !prev)}
 				>
 					<Edit2 className="h-[1.125rem] w-[1.125rem]" />
 					<span>Edit</span>

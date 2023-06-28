@@ -10,7 +10,7 @@ const Nav = async () => {
 	const session = await getServerSession(authOptions);
 
 	return (
-		<nav className="h-20 backdrop-blur-sm border-b-2 border-slate-200 dark:border-slate-800 py-4 z-50 fixed top-0 left-0 right-0 flex items-center bg-slate-50/75 dark:bg-slate-900/75">
+		<nav className="h-20 backdrop-blur-sm border-b-2 border-slate-200 dark:border-slate-800 py-4 z-50 fixed top-0 left-0 right-0 flex items-center bg-slate-100/75 dark:bg-slate-900/75">
 			<div className="container flex justify-between items-center">
 				<Button variant="link" asChild>
 					<Link href="/">GoalTrackr</Link>

@@ -1,17 +1,13 @@
-'use client';
-import { GoalDayType, GoalType } from '@/types/goal';
+import { GoalDayType } from '@/types/goal';
 import moment from 'moment';
-import React, { useState } from 'react';
-import GoalItem from './GoalItem';
 import GoalDayForm from './GoalDayForm';
+import GoalItem from './GoalItem';
 
 interface GoalDayProps {
 	goalDay: GoalDayType;
 }
 
 const GoalDay = ({ goalDay }: GoalDayProps) => {
-	const [editedGoal, setEditedGoal] = useState<null | GoalType>(null);
-
 	return (
 		<>
 			<div className="w-full">
@@ -20,10 +16,10 @@ const GoalDay = ({ goalDay }: GoalDayProps) => {
 				</h2>
 
 				{goalDay.goals.map((goal) => (
-					<GoalItem key={goal._id} goal={goal} setEditedGoal={setEditedGoal} />
+					<GoalItem key={goal._id} goal={goal} />
 				))}
 
-				<GoalDayForm editedGoal={editedGoal} setEditedGoal={setEditedGoal} />
+				<GoalDayForm />
 			</div>
 		</>
 	);
