@@ -1,16 +1,30 @@
-import mongoose, { Schema, model, models } from 'mongoose';
-import Goal from './goal';
+import mongoose from 'mongoose';
 
-const GoalDaySchema = new Schema(
+const GoalSchema = new mongoose.Schema(
+	{
+		goalDayId: {
+			type: mongoose.Schema.Types.ObjectId,
+			required: true,
+			ref: 'GoalDay',
+		},
+		text: {
+			type: String,
+			required: [true, 'A goal cannot be empty'],
+		},
+		completed: {
+			type: Boolean,
+		},
+	},
+	{ timestamps: true }
+);
+
+const GoalDaySchema = new mongoose.Schema(
 	{
 		userId: {
 			type: mongoose.Schema.Types.ObjectId,
-			required: true,
 			ref: 'User',
 		},
-		goals: {
-			type: [Goal],
-		},
+		goals: [GoalSchema],
 		goalTarget: {
 			type: Number,
 		},
@@ -18,6 +32,6 @@ const GoalDaySchema = new Schema(
 	{ timestamps: true }
 );
 
-const GoalDay = models.GoalDaySchema || model('GoalDay', GoalDaySchema);
+const GoalDay = mongoose.models.Goal_Day || mongoose.model('Goal_Day', GoalDaySchema);
 
 export default GoalDay;

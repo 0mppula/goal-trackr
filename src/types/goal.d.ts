@@ -1,5 +1,6 @@
 export interface GoalDayType {
 	_id: string;
+	userId: string;
 	goals: GoalType[];
 	goalTarget?: number;
 	createdAt: string;
@@ -7,6 +8,7 @@ export interface GoalDayType {
 }
 
 export interface GoalType {
+	_id: string;
 	text: string;
 	completed: boolean;
 	createdAt: string;
