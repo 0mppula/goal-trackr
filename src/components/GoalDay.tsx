@@ -15,8 +15,8 @@ const GoalDay = ({ goalDay }: GoalDayProps) => {
 					{moment(goalDay.createdAt).format('DD.MM.YY')} (Today)
 				</h2>
 
-				{goalDay.goals.map((goal) => (
-					<GoalItem key={goal._id} goal={goal} />
+				{goalDay.goals.map((goal, i) => (
+					<GoalItem key={`${goalDay._id}-${i}`} goal={goal} />
 				))}
 
 				<GoalDayForm />
