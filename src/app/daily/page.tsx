@@ -1,21 +1,27 @@
-import GoalDay from '@/components/GoalDay';
-import goalDays from '@/data/mockGoals.json';
-import moment from 'moment';
+import GoalList from '@/components/GoalList';
+import getQueryClient from '@/components/rq/getQueryClient';
+import { Hydrate, dehydrate } from '@tanstack/react-query';
 
-const page = () => {
+export const getGoalDays = async () => {
+	const goals = await fetch('/api/day-goals/get').then((res) => res.json());
+
+	return goals;
+};
+
+const page = async () => {
+	const queryClient = getQueryClient();
+	await queryClient.prefetchQuery(['goalDays'], getGoalDays);
+	const dehydratedState = dehydrate(queryClient);
+
 	return (
 		<div className="container pt-8">
 			<h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-center mb-8">
 				My Daily Goals
 			</h1>
 
-			<div className="flex flex-col justify-center items-center gap-y-8 max-w-3xl mx-auto divide-y-4 divide-slate-800">
-				{goalDays
-					.sort((a, b) => moment.utc(a.createdAt).diff(moment.utc(b.createdAt)))
-					.map((goalDay, i) => (
-						<GoalDay key={i} goalDay={goalDay} />
-					))}
-			</div>
+			<Hydrate state={dehydratedState}>
+				<GoalList />
+			</Hydrate>
 		</div>
 	);
 };

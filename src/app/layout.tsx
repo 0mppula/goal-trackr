@@ -1,10 +1,11 @@
 import Nav from '@/components/Nav';
+import Providers from '@/components/rq/Providers';
 import SessionProvider from '@/components/SessionProvider';
 import { ThemeProvider } from '@/components/theme-provider';
+import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,7 +28,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 						<Nav />
 						<Toaster />
 
-						{children}
+						<Providers>{children}</Providers>
 					</SessionProvider>
 				</ThemeProvider>
 			</body>
