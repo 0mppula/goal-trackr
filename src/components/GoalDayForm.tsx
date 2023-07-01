@@ -10,9 +10,11 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import ButtonLoading from './ui/ButtonLoading';
 
-interface GoalDayFormProps {}
+interface GoalDayFormProps {
+	isToday: boolean;
+}
 
-const GoalDayForm = ({}: GoalDayFormProps) => {
+const GoalDayForm = ({ isToday }: GoalDayFormProps) => {
 	const [loading, setLoading] = useState(false);
 	const [addingGoal, setAddingGoal] = useState(false);
 
@@ -53,6 +55,8 @@ const GoalDayForm = ({}: GoalDayFormProps) => {
 		form.reset({ goal: '' });
 	};
 
+	const handleAddFirstGoalDay = () => {};
+
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="mt-[1.5rem] w-full space-y-4">
@@ -87,8 +91,10 @@ const GoalDayForm = ({}: GoalDayFormProps) => {
 								Add goal
 							</ButtonLoading>
 						</>
-					) : (
+					) : isToday ? (
 						<Button onClick={() => setAddingGoal(true)}>New Goal</Button>
+					) : (
+						<Button onClick={handleAddFirstGoalDay}>New Goal Day</Button>
 					)}
 				</div>
 			</form>

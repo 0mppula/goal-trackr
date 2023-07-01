@@ -1,10 +1,10 @@
 'use client';
 import { getGoalDays } from '@/app/daily/page';
-import { GoalDayType } from '@/types/goal';
+import { GetGoalDaysApiData } from '@/types/goalDayApiData';
 import { useQuery } from '@tanstack/react-query';
 import moment from 'moment';
 import GoalDay from './GoalDay';
-import { GetGoalDaysApiData } from '@/types/goalDayApiData';
+import { GoalDayType } from '@/types/goal';
 
 const GoalList = () => {
 	const { data, isLoading } = useQuery<GetGoalDaysApiData>({
@@ -14,15 +14,17 @@ const GoalList = () => {
 
 	if (isLoading) return <p>Loading...</p>;
 
+	const todayHasGoals = !!data?.goalDays?.some((goalDay: GoalDayType) =>
+		moment(new Date()).isSame(goalDay.createdAt, 'day')
+	);
+
 	return (
 		<div className="flex flex-col justify-center items-center gap-y-8 max-w-3xl mx-auto divide-y-4 divide-slate-800">
-			{data?.goalDays
-				?.sort((a: GoalDayType, b: GoalDayType) =>
-					moment.utc(a.createdAt).diff(moment.utc(b.createdAt))
-				)
-				?.map((goalDay: GoalDayType, i: number) => (
-					<GoalDay key={i} isFirst={i === 0} goalDay={goalDay} />
-				))}
+			{!todayHasGoals && <GoalDay isFirst />}
+
+			{data?.goalDays?.map((goalDay, i) => (
+				<GoalDay key={i} isFirst={i === 0 && todayHasGoals} goalDay={goalDay} />
+			))}
 		</div>
 	);
 };

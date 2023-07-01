@@ -1,14 +1,13 @@
 import { connectToDB } from '@/lib/db';
 import { withMethods } from '@/lib/with-methods';
 import GoalDay from '@/models/goalDay';
-import { GoalDayType } from '@/types/goal';
-import { GetGoalDaysApiData } from '@/types/goalDayApiData';
+import { PostGoalDayApiData } from '@/types/goalDayApiData';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth';
 import { z } from 'zod';
 import { authOptions } from '../auth/[...nextauth]';
 
-const handler = async (req: NextApiRequest, res: NextApiResponse<GetGoalDaysApiData>) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse<PostGoalDayApiData>) => {
 	try {
 		const user = await getServerSession(req, res, authOptions);
 
@@ -21,11 +20,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<GetGoalDaysApiD
 
 		await connectToDB();
 
-		const goalDays = await GoalDay.find<GoalDayType>({ userId: user.user.id }).sort({
-			createdAt: -1,
-		});
+		const body = req.body;
 
-		return res.status(200).json({ error: null, goalDays });
+		const goalDay = await GoalDay.create<PostGoalDayApiData>({});
+
+		return res.status(200).json(goalDay);
 	} catch (error) {
 		if (error instanceof z.ZodError) {
 			return res.status(400).json({ error: error.issues, goalDays: null });
@@ -35,4 +34,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<GetGoalDaysApiD
 	}
 };
 
-export default withMethods(['GET'], handler);
+export default withMethods(['POST'], handler);

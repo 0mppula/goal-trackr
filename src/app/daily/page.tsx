@@ -1,9 +1,10 @@
 import GoalList from '@/components/GoalList';
 import getQueryClient from '@/components/rq/getQueryClient';
+import { GetGoalDaysApiData } from '@/types/goalDayApiData';
 import { Hydrate, dehydrate } from '@tanstack/react-query';
 
 export const getGoalDays = async () => {
-	const goals = await fetch('/api/day-goals/get').then((res) => res.json());
+	const goals: GetGoalDaysApiData = await fetch('/api/day-goals/get').then((res) => res.json());
 
 	return goals;
 };

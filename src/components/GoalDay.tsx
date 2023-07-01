@@ -5,11 +5,15 @@ import GoalItem from './GoalItem';
 import { cn } from '@/lib/utils';
 
 interface GoalDayProps {
-	goalDay: GoalDayType;
+	goalDay?: GoalDayType | null;
 	isFirst: boolean;
 }
 
-const GoalDay = ({ goalDay, isFirst }: GoalDayProps) => {
+const GoalDay = ({ goalDay = null, isFirst }: GoalDayProps) => {
+	const isToday = !!goalDay && moment(new Date()).isSame(goalDay?.createdAt, 'day');
+
+	console.log(moment(goalDay?.createdAt).format('DD.MM.YY'));
+
 	return (
 		<>
 			<div className="w-full">
@@ -19,14 +23,24 @@ const GoalDay = ({ goalDay, isFirst }: GoalDayProps) => {
 						isFirst ? 'mt-0' : 'mt-8'
 					)}
 				>
-					{moment(goalDay.createdAt).format('DD.MM.YY')} (Today)
+					{goalDay && (
+						<>
+							{moment(goalDay?.createdAt).format('DD.MM.YY')} {isToday && '(Today)'}
+						</>
+					)}
+
+					{!goalDay && <>{moment(new Date()).format('DD.MM.YY')} (Today)</>}
 				</h2>
 
-				{goalDay.goals.map((goal) => (
+				{goalDay?.goals.map((goal) => (
 					<GoalItem key={goal._id} goal={goal} />
 				))}
 
-				<GoalDayForm />
+				{!goalDay && (
+					<p className="leading-7 grow mt-4">This day does not have any goals yet. 🤔</p>
+				)}
+
+				<GoalDayForm isToday={isToday} />
 			</div>
 		</>
 	);
