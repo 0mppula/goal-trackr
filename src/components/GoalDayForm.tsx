@@ -4,21 +4,21 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
+import { GoalDayType } from '@/types/goal';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import { getSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import ButtonLoading from './ui/ButtonLoading';
-import { getSession } from 'next-auth/react';
-import axios from 'axios';
-import { useMutation } from '@tanstack/react-query';
-import { useQueryClient } from '@tanstack/react-query';
 
 interface GoalDayFormProps {
-	isToday: boolean;
+	goalDay: GoalDayType | null;
 }
 
-const GoalDayForm = ({ isToday }: GoalDayFormProps) => {
+const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	const [loading, setLoading] = useState(false);
 	const [addingGoal, setAddingGoal] = useState(false);
 
@@ -34,17 +34,27 @@ const GoalDayForm = ({ isToday }: GoalDayFormProps) => {
 			goalTarget: 0,
 		};
 
-		const response = await axios.post('/api/day-goals/new', newDayGoal);
+		const { data } = await axios.post('/api/day-goals/new', newDayGoal);
 
-		return response.data;
+		return data as GoalDayType;
 	};
 
 	const addNewMutation = useMutation({
 		mutationFn: handleAddFirstGoalDay,
-		onMutate: async () => {
-			await queryClient.refetchQueries({ queryKey: ['goalDays'] });
+		onMutate: () => {
+			setLoading(true);
+			queryClient.invalidateQueries(['goalDays'], { exact: true });
 		},
-		onSuccess: () => queryClient.invalidateQueries({ queryKey: ['goalDays'] }),
+		onSuccess: (data) => {
+			// @ts-ignore
+			queryClient.setQueriesData(['goalDays'], (oldData) => {
+				// @ts-ignore
+				return { ...oldData, goalDays: [data, ...oldData.goalDays] };
+			});
+		},
+		onSettled: () => {
+			setLoading(false);
+		},
 	});
 
 	const FormSchema = z.object({
@@ -84,8 +94,6 @@ const GoalDayForm = ({ isToday }: GoalDayFormProps) => {
 		form.reset({ goal: '' });
 	};
 
-	if (addNewMutation.isLoading) return <h1>loading</h1>;
-
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="mt-[1.5rem] w-full space-y-4">
@@ -120,10 +128,14 @@ const GoalDayForm = ({ isToday }: GoalDayFormProps) => {
 								Add goal
 							</ButtonLoading>
 						</>
-					) : isToday ? (
-						<Button onClick={() => setAddingGoal(true)}>New Goal</Button>
+					) : goalDay ? (
+						<ButtonLoading loading={loading} onClick={() => setAddingGoal(true)}>
+							New Goal
+						</ButtonLoading>
 					) : (
-						<Button onClick={handleAddFirstGoalDay}>New Goal Day</Button>
+						<ButtonLoading loading={loading} onClick={() => addNewMutation.mutate()}>
+							New Goal Day
+						</ButtonLoading>
 					)}
 				</div>
 			</form>

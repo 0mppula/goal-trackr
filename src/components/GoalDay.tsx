@@ -5,12 +5,12 @@ import GoalItem from './GoalItem';
 import { cn } from '@/lib/utils';
 
 interface GoalDayProps {
-	goalDay?: GoalDayType | null;
+	goalDay: GoalDayType | null;
 	isFirst: boolean;
 }
 
-const GoalDay = ({ goalDay = null, isFirst }: GoalDayProps) => {
-	const isToday = !!goalDay && moment(new Date()).isSame(goalDay?.createdAt, 'day');
+const GoalDay = ({ goalDay, isFirst }: GoalDayProps) => {
+	const isToday = moment(new Date()).isSame(goalDay?.createdAt, 'day');
 
 	return (
 		<>
@@ -35,10 +35,16 @@ const GoalDay = ({ goalDay = null, isFirst }: GoalDayProps) => {
 				))}
 
 				{!goalDay && (
+					<p className="leading-7 grow mt-4">
+						Create a new goal day to start tracking your goals.
+					</p>
+				)}
+
+				{goalDay?.goals?.length === 0 && (
 					<p className="leading-7 grow mt-4">This day does not have any goals yet. 🤔</p>
 				)}
 
-				<GoalDayForm isToday={isToday} />
+				<GoalDayForm goalDay={goalDay} />
 			</div>
 		</>
 	);
