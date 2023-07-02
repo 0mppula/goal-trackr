@@ -21,7 +21,7 @@ const GoalItem = ({ goal }: GoalItemProps) => {
 						'bg-slate-300 dark:bg-slate-800 border-yellow-700 dark:border-yellow-300'
 				)}
 			>
-				<p className="leading-7 grow">{goal.text}</p>
+				<p className="leading-7 grow self-center">{goal.text}</p>
 
 				<GaolItemControls setEditingGoal={setEditingGoal} goal={goal} />
 			</div>

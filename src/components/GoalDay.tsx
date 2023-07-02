@@ -34,14 +34,8 @@ const GoalDay = ({ goalDay, isFirst }: GoalDayProps) => {
 					<GoalItem key={goal._id} goal={goal} />
 				))}
 
-				{!goalDay && (
-					<p className="leading-7 grow mt-4">
-						Create a new goal day to start tracking your goals.
-					</p>
-				)}
-
-				{goalDay?.goals?.length === 0 && (
-					<p className="leading-7 grow mt-4">This day does not have any goals yet. 🤔</p>
+				{(goalDay?.goals?.length === 0 || !goalDay) && (
+					<p className="leading-7 grow mt-4">No goals for this day. 🤔</p>
 				)}
 
 				<GoalDayForm goalDay={goalDay} />

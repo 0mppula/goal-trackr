@@ -24,13 +24,13 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 
 	const queryClient = useQueryClient();
 
-	const handleAddFirstGoalDay = async () => {
+	const handleAddFirstGoalDay = async (goalText: string) => {
 		const session = await getSession();
 		const userId = session?.user.id;
 
 		const newDayGoal = {
 			userId,
-			goals: [],
+			goals: [{ text: goalText, completed: false }],
 			goalTarget: 0,
 		};
 
@@ -44,6 +44,9 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 		onMutate: () => {
 			setLoading(true);
 			queryClient.invalidateQueries(['goalDays'], { exact: true });
+		},
+		onError: (err) => {
+			form.setFocus('goal');
 		},
 		onSuccess: (data) => {
 			// @ts-ignore
@@ -75,6 +78,12 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	}, [addingGoal]);
 
 	const onSubmit = (data: z.infer<typeof FormSchema>) => {
+		if (!goalDay) {
+			addNewMutation.mutate(data.goal);
+
+			return;
+		}
+
 		toast({
 			title: 'You submitted the following values:',
 			description: (
@@ -133,7 +142,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 							New Goal
 						</ButtonLoading>
 					) : (
-						<ButtonLoading loading={loading} onClick={() => addNewMutation.mutate()}>
+						<ButtonLoading loading={loading} onClick={() => setAddingGoal(true)}>
 							New Goal Day
 						</ButtonLoading>
 					)}

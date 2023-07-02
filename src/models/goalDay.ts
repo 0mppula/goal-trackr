@@ -2,11 +2,6 @@ import mongoose from 'mongoose';
 
 const GoalSchema = new mongoose.Schema(
 	{
-		goalDayId: {
-			type: mongoose.Schema.Types.ObjectId,
-			required: true,
-			ref: 'GoalDay',
-		},
 		text: {
 			type: String,
 			required: [true, 'A goal cannot be empty'],
@@ -22,7 +17,7 @@ const GoalDaySchema = new mongoose.Schema(
 	{
 		userId: {
 			type: mongoose.Schema.Types.ObjectId,
-			require: true,
+			required: true,
 			ref: 'User',
 		},
 		goals: [GoalSchema],
