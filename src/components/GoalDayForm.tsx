@@ -29,18 +29,11 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 		await axios.post('/api/day-goals/new', newGoalDay);
 	};
 
-	const handleAddGoal = async (goalText: string) => {
-		const newGoal = {
-			text: goalText,
-			completed: false,
-		};
-
-		const { data } = await axios.post(`/api/day-goals/${goalDay?._id}/new-goal`, {
-			newGoal,
+	const handleAddGoal = async (newGoalDay: GoalDayType) => {
+		await axios.post(`/api/day-goals/${goalDay?._id}/new-goal`, {
+			newGoalDay,
 			goalDayId: goalDay?._id,
 		});
-
-		return data as PostGoalDayApiData;
 	};
 
 	const addNewGoalDayMutation = useMutation({
@@ -62,7 +55,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			// ADD TOAST
 
 			// @ts-ignore
-			queryClient.setQueryData(['goalDays'], context?.previousTodos);
+			queryClient.setQueryData(['goalDays'], context?.previousGoalDays);
 			form.setFocus('goal');
 		},
 		onSuccess: (data) => {
@@ -75,20 +68,44 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 
 	const addGoalMutation = useMutation({
 		mutationFn: handleAddGoal,
-		onMutate: () => setLoading(true),
-		onError: (err) => form.setFocus('goal'),
-		onSuccess: (data) => {
+		onMutate: async (newGoalDay) => {
+			await queryClient.cancelQueries({ queryKey: ['goalDays'] });
+
+			const previousGoalDays = queryClient.getQueryData(['goalDays']);
+
 			// @ts-ignore
 			queryClient.setQueriesData(['goalDays'], (oldData) => {
 				// @ts-ignore
-				return { ...oldData, goalDays: [data.goalDay, ...oldData.goalDays] };
+				return {
+					// @ts-ignore
+					...oldData,
+					goalDays: [
+						newGoalDay,
+						// @ts-ignore
+						...oldData.goalDays.filter((gd) => gd._id !== newGoalDay._id),
+					],
+				};
 			});
 
-			queryClient.invalidateQueries(['goalDays'], { exact: true });
 			form.setFocus('goal');
 			form.reset({ goal: '' });
+
+			return { previousGoalDays };
 		},
-		onSettled: () => setLoading(false),
+		onError: (err, newGoalDay, context) => {
+			// ADD TOAST
+
+			// @ts-ignore
+			queryClient.setQueryData(['goalDays'], context?.previousGoalDays);
+
+			form.setFocus('goal');
+		},
+		onSuccess: (data) => {
+			// ADD TOAST
+		},
+		onSettled: () => {
+			// queryClient.invalidateQueries(['goalDays'], { exact: true });
+		},
 	});
 
 	const FormSchema = z.object({
@@ -122,7 +139,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			};
 
 			const newGoalDay: GoalDayType = {
-				_id: generateId(),
+				_id: goalDay ? goalDay._id : generateId(),
 				userId: session?.user.id,
 				goals: [...(goalDay?.goals || []), newGoal],
 				goalTarget: 0,
@@ -135,7 +152,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			}
 
 			if (goalDay) {
-				addGoalMutation.mutate(data.goal);
+				addGoalMutation.mutate(newGoalDay);
 			}
 		}
 	};

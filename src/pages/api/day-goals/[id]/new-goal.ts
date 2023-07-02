@@ -22,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<PostGoalDayApiD
 		await connectToDB();
 
 		const { id: goalDayId } = req.query;
-		const { newGoal } = req.body;
+		const { newGoalDay: goalDayParam } = req.body;
 
 		const goalDay: GoalDayType | null = await GoalDay.findById(goalDayId);
 
@@ -33,9 +33,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<PostGoalDayApiD
 			});
 		}
 
-		const newGoalDay: GoalDayType | null = await GoalDay.findByIdAndUpdate(goalDayId, {
-			goals: [...goalDay.goals, newGoal],
-		});
+		const newGoalDay: GoalDayType | null = await GoalDay.findByIdAndUpdate(
+			goalDayId,
+			goalDayParam
+		);
 
 		return res.status(200).json({ error: null, goalDay: newGoalDay });
 	} catch (error) {
