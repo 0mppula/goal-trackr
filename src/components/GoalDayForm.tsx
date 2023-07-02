@@ -46,29 +46,28 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	const addNewGoalDayMutation = useMutation({
 		mutationFn: handleAddFirstGoalDay,
 		onMutate: async (newGoalDay) => {
-			// Cancel any outgoing refetches
-			// (so they don't overwrite our optimistic update)
 			await queryClient.cancelQueries({ queryKey: ['goalDays'] });
 
-			// Snapshot the previous value
 			const previousGoalDays = queryClient.getQueryData(['goalDays']);
 
-			// Optimistically update to the new value
 			// @ts-ignore
 			queryClient.setQueriesData(['goalDays'], (oldData) => {
 				// @ts-ignore
 				return { ...oldData, goalDays: [newGoalDay, ...oldData.goalDays] };
 			});
 
-			// Return a context object with the snapshotted value
 			return { previousGoalDays };
 		},
 		onError: (err, newGoalDay, context) => {
+			// ADD TOAST
+
 			// @ts-ignore
 			queryClient.setQueryData(['goalDays'], context?.previousTodos);
 			form.setFocus('goal');
 		},
-		onSuccess: (data) => {},
+		onSuccess: (data) => {
+			// ADD TOAST
+		},
 		onSettled: () => {
 			queryClient.invalidateQueries(['goalDays'], { exact: true });
 		},
