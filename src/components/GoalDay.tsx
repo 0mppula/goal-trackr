@@ -12,8 +12,6 @@ interface GoalDayProps {
 const GoalDay = ({ goalDay = null, isFirst }: GoalDayProps) => {
 	const isToday = !!goalDay && moment(new Date()).isSame(goalDay?.createdAt, 'day');
 
-	console.log(moment(goalDay?.createdAt).format('DD.MM.YY'));
-
 	return (
 		<>
 			<div className="w-full">

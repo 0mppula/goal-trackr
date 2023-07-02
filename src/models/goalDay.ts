@@ -22,6 +22,7 @@ const GoalDaySchema = new mongoose.Schema(
 	{
 		userId: {
 			type: mongoose.Schema.Types.ObjectId,
+			require: true,
 			ref: 'User',
 		},
 		goals: [GoalSchema],

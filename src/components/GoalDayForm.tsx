@@ -9,6 +9,10 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import ButtonLoading from './ui/ButtonLoading';
+import { getSession } from 'next-auth/react';
+import axios from 'axios';
+import { useMutation } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface GoalDayFormProps {
 	isToday: boolean;
@@ -17,6 +21,31 @@ interface GoalDayFormProps {
 const GoalDayForm = ({ isToday }: GoalDayFormProps) => {
 	const [loading, setLoading] = useState(false);
 	const [addingGoal, setAddingGoal] = useState(false);
+
+	const queryClient = useQueryClient();
+
+	const handleAddFirstGoalDay = async () => {
+		const session = await getSession();
+		const userId = session?.user.id;
+
+		const newDayGoal = {
+			userId,
+			goals: [],
+			goalTarget: 0,
+		};
+
+		const response = await axios.post('/api/day-goals/new', newDayGoal);
+
+		return response.data;
+	};
+
+	const addNewMutation = useMutation({
+		mutationFn: handleAddFirstGoalDay,
+		onMutate: async () => {
+			await queryClient.refetchQueries({ queryKey: ['goalDays'] });
+		},
+		onSuccess: () => queryClient.invalidateQueries({ queryKey: ['goalDays'] }),
+	});
 
 	const FormSchema = z.object({
 		goal: z.string().min(1, {
@@ -55,7 +84,7 @@ const GoalDayForm = ({ isToday }: GoalDayFormProps) => {
 		form.reset({ goal: '' });
 	};
 
-	const handleAddFirstGoalDay = () => {};
+	if (addNewMutation.isLoading) return <h1>loading</h1>;
 
 	return (
 		<Form {...form}>

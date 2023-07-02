@@ -20,9 +20,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<PostGoalDayApiD
 
 		await connectToDB();
 
-		const body = req.body;
+		const goalDayData = req.body;
 
-		const goalDay = await GoalDay.create<PostGoalDayApiData>({});
+		const goalDay = await GoalDay.create<PostGoalDayApiData>(goalDayData);
 
 		return res.status(200).json(goalDay);
 	} catch (error) {
