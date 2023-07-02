@@ -4,7 +4,7 @@ import { generateId } from '@/app/utils/generateId';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { GoalDayType } from '@/types/goal';
+import { GoalDayType, GoalType } from '@/types/goal';
 import { PostGoalDayApiData } from '@/types/goalDayApiData';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -114,32 +114,30 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 		const timestamp = new Date().toISOString();
 
 		if (session?.user.id) {
+			const newGoal: GoalType = {
+				_id: generateId(),
+				text: data.goal,
+				completed: false,
+				createdAt: timestamp,
+				updatedAt: timestamp,
+			};
+
+			const newGoalDay: GoalDayType = {
+				_id: generateId(),
+				userId: session?.user.id,
+				goals: [...(goalDay?.goals || []), newGoal],
+				goalTarget: 0,
+				createdAt: timestamp,
+				updatedAt: timestamp,
+			};
+
 			if (!goalDay) {
-				const newGoalDay: GoalDayType = {
-					_id: generateId(),
-					userId: session?.user.id,
-					goals: [
-						{
-							_id: generateId(),
-							text: data.goal,
-							completed: false,
-							createdAt: timestamp,
-							updatedAt: timestamp,
-						},
-					],
-					goalTarget: 0,
-					createdAt: timestamp,
-					updatedAt: timestamp,
-				};
-
 				addNewGoalDayMutation.mutate(newGoalDay);
-
-				return;
 			}
-		}
 
-		if (goalDay) {
-			addGoalMutation.mutate(data.goal);
+			if (goalDay) {
+				addGoalMutation.mutate(data.goal);
+			}
 		}
 	};
 
