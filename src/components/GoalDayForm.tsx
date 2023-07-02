@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { GoalDayType, GoalType } from '@/types/goal';
-import { PostGoalDayApiData } from '@/types/goalDayApiData';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
@@ -109,7 +108,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	});
 
 	const FormSchema = z.object({
-		goal: z.string().min(1, {
+		goal: z.string().trim().min(1, {
 			message: 'The goal field cannot be empty.',
 		}),
 	});
@@ -132,7 +131,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 		if (session?.user.id) {
 			const newGoal: GoalType = {
 				_id: generateId(),
-				text: data.goal,
+				text: data.goal.trim(),
 				completed: false,
 				createdAt: timestamp,
 				updatedAt: timestamp,

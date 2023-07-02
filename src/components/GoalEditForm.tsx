@@ -19,7 +19,7 @@ const GoalEditForm = ({ goal, editingGoal, setEditingGoal }: GoalEditFormProps) 
 	const [loading, setLoading] = useState(false);
 
 	const FormSchema = z.object({
-		goal: z.string().min(1, {
+		goal: z.string().trim().min(1, {
 			message: 'The goal field cannot be empty.',
 		}),
 	});
@@ -32,6 +32,7 @@ const GoalEditForm = ({ goal, editingGoal, setEditingGoal }: GoalEditFormProps) 
 	useEffect(() => {
 		if (editingGoal) {
 			setTimeout(() => form.setFocus('goal'), 200);
+
 			form.reset({ goal: goal.text });
 		}
 	}, [editingGoal]);
