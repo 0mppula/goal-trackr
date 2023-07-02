@@ -21,9 +21,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<PostGoalDayApiD
 		await connectToDB();
 
 		const goalDayData = req.body;
-		const userId = user.user.id;
 
-		const goalDay = await GoalDay.create<PostGoalDayApiData>({ ...goalDayData, userId });
+		const goalDay = await GoalDay.create<PostGoalDayApiData>(goalDayData);
 
 		return res.status(200).json({ error: null, goalDay });
 	} catch (error) {
