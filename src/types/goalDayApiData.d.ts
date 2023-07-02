@@ -5,5 +5,5 @@ export interface GetGoalDaysApiData {
 
 export interface PostGoalDayApiData {
 	error: string | ZodIssue[] | null;
-	goalDays: GoalDayType | null;
+	goalDay: GoalDayType | null;
 }

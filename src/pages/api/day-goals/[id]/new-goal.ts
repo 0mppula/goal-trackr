@@ -5,7 +5,8 @@ import { PostGoalDayApiData } from '@/types/goalDayApiData';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth';
 import { z } from 'zod';
-import { authOptions } from '../auth/[...nextauth]';
+import { authOptions } from '../../auth/[...nextauth]';
+import { GoalDayType } from '@/types/goal';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<PostGoalDayApiData>) => {
 	try {
@@ -20,12 +21,23 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<PostGoalDayApiD
 
 		await connectToDB();
 
-		const goalDayData = req.body;
-		const userId = user.user.id;
+		const { id: goalDayId } = req.query;
+		const { newGoal } = req.body;
 
-		const goalDay = await GoalDay.create<PostGoalDayApiData>({ ...goalDayData, userId });
+		const goalDay: GoalDayType | null = await GoalDay.findById(goalDayId);
 
-		return res.status(200).json({ error: null, goalDay });
+		if (!goalDay) {
+			return res.status(401).json({
+				error: 'Goal day does not exist',
+				goalDay: null,
+			});
+		}
+
+		const newGoalDay: GoalDayType | null = await GoalDay.findByIdAndUpdate(goalDayId, {
+			goals: [...goalDay.goals, newGoal],
+		});
+
+		return res.status(200).json({ error: null, goalDay: newGoalDay });
 	} catch (error) {
 		if (error instanceof z.ZodError) {
 			return res.status(400).json({ error: error.issues, goalDay: null });

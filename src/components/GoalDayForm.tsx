@@ -5,10 +5,10 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 import { GoalDayType } from '@/types/goal';
+import { PostGoalDayApiData } from '@/types/goalDayApiData';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { getSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -25,26 +25,33 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	const queryClient = useQueryClient();
 
 	const handleAddFirstGoalDay = async (goalText: string) => {
-		const session = await getSession();
-		const userId = session?.user.id;
-
 		const newDayGoal = {
-			userId,
 			goals: [{ text: goalText, completed: false }],
 			goalTarget: 0,
 		};
 
 		const { data } = await axios.post('/api/day-goals/new', newDayGoal);
 
-		return data as GoalDayType;
+		return data as PostGoalDayApiData;
 	};
 
-	const addNewMutation = useMutation({
+	const handleAddGoal = async (goalText: string) => {
+		const newGoal = {
+			text: goalText,
+			completed: false,
+		};
+
+		const { data } = await axios.post(`/api/day-goals/${goalDay?._id}/new-goal`, {
+			newGoal,
+			goalDayId: goalDay?._id,
+		});
+
+		return data as PostGoalDayApiData;
+	};
+
+	const addNewGoalDayMutation = useMutation({
 		mutationFn: handleAddFirstGoalDay,
-		onMutate: () => {
-			setLoading(true);
-			queryClient.invalidateQueries(['goalDays'], { exact: true });
-		},
+		onMutate: () => setLoading(true),
 		onError: (err) => {
 			form.setFocus('goal');
 		},
@@ -52,12 +59,30 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			// @ts-ignore
 			queryClient.setQueriesData(['goalDays'], (oldData) => {
 				// @ts-ignore
-				return { ...oldData, goalDays: [data, ...oldData.goalDays] };
+				return { ...oldData, goalDays: [data.goalDay, ...oldData.goalDays] };
 			});
+
+			queryClient.invalidateQueries(['goalDays'], { exact: true });
 		},
-		onSettled: () => {
-			setLoading(false);
+		onSettled: () => setLoading(false),
+	});
+
+	const addGoalMutation = useMutation({
+		mutationFn: handleAddGoal,
+		onMutate: () => setLoading(true),
+		onError: (err) => form.setFocus('goal'),
+		onSuccess: (data) => {
+			// @ts-ignore
+			queryClient.setQueriesData(['goalDays'], (oldData) => {
+				// @ts-ignore
+				return { ...oldData, goalDays: [data.goalDay, ...oldData.goalDays] };
+			});
+
+			queryClient.invalidateQueries(['goalDays'], { exact: true });
+			form.setFocus('goal');
+			form.reset({ goal: '' });
 		},
+		onSettled: () => setLoading(false),
 	});
 
 	const FormSchema = z.object({
@@ -79,22 +104,14 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 
 	const onSubmit = (data: z.infer<typeof FormSchema>) => {
 		if (!goalDay) {
-			addNewMutation.mutate(data.goal);
+			addNewGoalDayMutation.mutate(data.goal);
 
 			return;
 		}
 
-		toast({
-			title: 'You submitted the following values:',
-			description: (
-				<pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-					<code className="text-white">{JSON.stringify(data, null, 2)}</code>
-				</pre>
-			),
-		});
-
-		form.setFocus('goal');
-		form.reset({ goal: '' });
+		if (goalDay) {
+			addGoalMutation.mutate(data.goal);
+		}
 	};
 
 	const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
