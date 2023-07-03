@@ -16,9 +16,9 @@ interface GoalItemControlsProps {
 }
 
 const GoalItemControls = ({ goal, setEditingGoal }: GoalItemControlsProps) => {
-	const [deleteLoading, setDeleteLoading] = useState(false);
-
-	const handleGoalDelete = () => {};
+	const handleGoalDelete = () => {
+		console.log('DELETING GOAL', goal._id);
+	};
 
 	return (
 		<DropdownMenu>
@@ -32,7 +32,6 @@ const GoalItemControls = ({ goal, setEditingGoal }: GoalItemControlsProps) => {
 			<DropdownMenuContent align="end">
 				<DropdownMenuItem
 					className="flex gap-2"
-					disabled={deleteLoading}
 					onClick={() => setEditingGoal((prev) => !prev)}
 				>
 					<Edit2 className="h-[1.125rem] w-[1.125rem]" />
@@ -41,15 +40,10 @@ const GoalItemControls = ({ goal, setEditingGoal }: GoalItemControlsProps) => {
 				</DropdownMenuItem>
 
 				<DropdownMenuItem
-					className="flex gap-2"
-					disabled={deleteLoading}
+					className="flex gap-2 focus:bg-destructive"
 					onClick={handleGoalDelete}
 				>
-					{deleteLoading ? (
-						<Loader2 className="h-[1.125rem] w-[1.125rem] animate-spin" />
-					) : (
-						<Trash2 className="h-[1.125rem] w-[1.125rem]" />
-					)}
+					<Trash2 className="h-[1.125rem] w-[1.125rem]" />
 					<span>Delete</span>
 					<span className="sr-only">Delete Goal</span>
 				</DropdownMenuItem>
