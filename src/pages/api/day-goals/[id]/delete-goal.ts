@@ -20,8 +20,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<DeleteGoalDayAp
 
 		await connectToDB();
 
-		const { goalId } = req.query;
-		const { goalDayId } = req.body;
+		const { id: goalDayId } = req.query;
+		const { goalId } = req.body;
 
 		const goalDay: GoalDayType | null = await GoalDay.findById(goalDayId);
 
@@ -31,7 +31,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<DeleteGoalDayAp
 			});
 		}
 
-		GoalDay.updateOne({ _id: goalDayId }, { $pull: { goals: { _id: goalId } } });
+		await GoalDay.updateOne({ _id: goalDayId }, { $pull: { goals: { _id: goalId } } });
 
 		return res.status(200).json({ error: null });
 	} catch (error) {
@@ -43,4 +43,4 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<DeleteGoalDayAp
 	}
 };
 
-export default withMethods(['DELETE'], handler);
+export default withMethods(['POST'], handler);

@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { GoalDayType, GoalType } from '@/types/goal';
 import { useState } from 'react';
 import GoalEditForm from './GoalEditForm';
-import GaolItemControls from './GoalItemControls';
+import GoalItemControls from './GoalItemControls';
 
 interface GoalItemProps {
 	goalDay: GoalDayType;
@@ -24,7 +24,7 @@ const GoalItem = ({ goalDay, goal }: GoalItemProps) => {
 			>
 				<p className="leading-7 grow self-center">{goal.text}</p>
 
-				<GaolItemControls setEditingGoal={setEditingGoal} goal={goal} />
+				<GoalItemControls setEditingGoal={setEditingGoal} goalDay={goalDay} goal={goal} />
 			</div>
 
 			<GoalEditForm

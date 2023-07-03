@@ -5,20 +5,73 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { GoalType } from '@/types/goal';
-import { Edit2, Loader2, MoreVertical, Trash2 } from 'lucide-react';
-import React, { useState } from 'react';
+import { GoalDayType, GoalType } from '@/types/goal';
+import axios from 'axios';
+import { Edit2, MoreVertical, Trash2 } from 'lucide-react';
+import React from 'react';
 import { Button } from './ui/button';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from './ui/use-toast';
 
 interface GoalItemControlsProps {
+	goalDay: GoalDayType;
 	goal: GoalType;
 	setEditingGoal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const GoalItemControls = ({ goal, setEditingGoal }: GoalItemControlsProps) => {
-	const handleGoalDelete = () => {
-		console.log('DELETING GOAL', goal._id);
+const GoalItemControls = ({ goalDay, goal, setEditingGoal }: GoalItemControlsProps) => {
+	const queryClient = useQueryClient();
+
+	const handleGoalDelete = async () => {
+		await axios.post(`/api/day-goals/${goalDay?._id}/delete-goal`, {
+			goalId: goal._id,
+		});
 	};
+
+	const deleteGoalMutation = useMutation({
+		mutationFn: handleGoalDelete,
+		onMutate: async () => {
+			await queryClient.cancelQueries({ queryKey: ['goalDays'] });
+
+			const previousGoalDays = queryClient.getQueryData(['goalDays']);
+
+			const newGoalDay = {
+				...goalDay,
+				goals: [...goalDay.goals].filter((g) => g._id !== goal._id),
+			};
+
+			// @ts-ignore
+			queryClient.setQueriesData(['goalDays'], (oldData) => {
+				// @ts-ignore
+				return {
+					// @ts-ignore
+					...oldData,
+					goalDays: [
+						newGoalDay,
+						// @ts-ignore
+						...oldData.goalDays.filter((gd) => gd._id !== newGoalDay._id),
+					],
+				};
+			});
+
+			return { previousGoalDays };
+		},
+		onError: (err, newGoalDay, context) => {
+			toast({
+				variant: 'destructive',
+				title: 'Error deleting your goal.',
+				description: 'Please try again later.',
+			});
+
+			queryClient.setQueryData(['goalDays'], context?.previousGoalDays);
+		},
+		onSuccess: () => {
+			toast({ description: 'Goal Deleted.' });
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries(['goalDays'], { exact: true });
+		},
+	});
 
 	return (
 		<DropdownMenu>
@@ -41,7 +94,7 @@ const GoalItemControls = ({ goal, setEditingGoal }: GoalItemControlsProps) => {
 
 				<DropdownMenuItem
 					className="flex gap-2 focus:bg-destructive"
-					onClick={handleGoalDelete}
+					onClick={() => deleteGoalMutation.mutate()}
 				>
 					<Trash2 className="h-[1.125rem] w-[1.125rem]" />
 					<span>Delete</span>
