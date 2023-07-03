@@ -1,8 +1,8 @@
+import { cn } from '@/lib/utils';
 import { GoalDayType } from '@/types/goal';
 import moment from 'moment';
 import GoalDayForm from './GoalDayForm';
 import GoalItem from './GoalItem';
-import { cn } from '@/lib/utils';
 
 interface GoalDayProps {
 	goalDay: GoalDayType | null;
@@ -30,9 +30,11 @@ const GoalDay = ({ goalDay, isFirst }: GoalDayProps) => {
 					{!goalDay && <>{moment(new Date()).format('DD.MM.YY')} (Today)</>}
 				</h2>
 
-				{goalDay?.goals.map((goal) => (
-					<GoalItem key={goal._id} goal={goal} />
-				))}
+				{goalDay?.goals
+					.sort((a, b) => moment.utc(a.createdAt).diff(moment.utc(b.createdAt)))
+					.map((goal) => (
+						<GoalItem key={goal._id} goal={goal} />
+					))}
 
 				{(goalDay?.goals?.length === 0 || !goalDay) && (
 					<p className="leading-7 grow mt-4">No goals for this day. 🤔</p>
