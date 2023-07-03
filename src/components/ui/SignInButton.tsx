@@ -16,7 +16,7 @@ const SignInButton = () => {
 			await signIn('google');
 		} catch (error) {
 			toast({
-				title: 'Error signing in',
+				title: 'Error signing in.',
 				description: 'Please try again later.',
 				variant: 'destructive',
 			});

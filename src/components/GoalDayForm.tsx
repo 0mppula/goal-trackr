@@ -12,14 +12,13 @@ import { getSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import ButtonLoading from './ui/ButtonLoading';
+import { toast } from './ui/use-toast';
 
 interface GoalDayFormProps {
 	goalDay: GoalDayType | null;
 }
 
 const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
-	const [loading, setLoading] = useState(false);
 	const [addingGoal, setAddingGoal] = useState(false);
 
 	const queryClient = useQueryClient();
@@ -29,10 +28,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	};
 
 	const handleAddGoal = async (newGoalDay: GoalDayType) => {
-		await axios.post(`/api/day-goals/${goalDay?._id}/new-goal`, {
-			newGoalDay,
-			goalDayId: goalDay?._id,
-		});
+		await axios.post(`/api/day-goals/${goalDay?._id}/new-goal`, { newGoalDay });
 	};
 
 	const addNewGoalDayMutation = useMutation({
@@ -51,14 +47,18 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			return { previousGoalDays };
 		},
 		onError: (err, newGoalDay, context) => {
-			// ADD TOAST
+			toast({
+				variant: 'destructive',
+				title: 'Error adding a new goal.',
+				description: 'Please try again later.',
+			});
 
 			// @ts-ignore
 			queryClient.setQueryData(['goalDays'], context?.previousGoalDays);
 			form.setFocus('goal');
 		},
-		onSuccess: (data) => {
-			// ADD TOAST
+		onSuccess: () => {
+			toast({ description: 'Goal added.' });
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries(['goalDays'], { exact: true });
@@ -92,18 +92,22 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			return { previousGoalDays };
 		},
 		onError: (err, newGoalDay, context) => {
-			// ADD TOAST
+			toast({
+				variant: 'destructive',
+				title: 'Error adding a new goal.',
+				description: 'Please try again later.',
+			});
 
 			// @ts-ignore
 			queryClient.setQueryData(['goalDays'], context?.previousGoalDays);
 
 			form.setFocus('goal');
 		},
-		onSuccess: (data) => {
-			// ADD TOAST
+		onSuccess: () => {
+			toast({ title: 'Goal added.' });
 		},
 		onSettled: () => {
-			// queryClient.invalidateQueries(['goalDays'], { exact: true });
+			queryClient.invalidateQueries(['goalDays'], { exact: true });
 		},
 	});
 
@@ -183,27 +187,14 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 				<div className="flex gap-4">
 					{addingGoal ? (
 						<>
-							<Button
-								variant="ghost"
-								type="button"
-								disabled={loading}
-								onClick={(e) => handleCancel(e)}
-							>
+							<Button variant="ghost" type="button" onClick={(e) => handleCancel(e)}>
 								Cancel
 							</Button>
 
-							<ButtonLoading loading={loading} type="submit">
-								Add goal
-							</ButtonLoading>
+							<Button type="submit">Add goal</Button>
 						</>
-					) : goalDay ? (
-						<ButtonLoading loading={loading} onClick={() => setAddingGoal(true)}>
-							New Goal
-						</ButtonLoading>
 					) : (
-						<ButtonLoading loading={loading} onClick={() => setAddingGoal(true)}>
-							New Goal Day
-						</ButtonLoading>
+						<Button onClick={() => setAddingGoal(true)}>New Goal</Button>
 					)}
 				</div>
 			</form>

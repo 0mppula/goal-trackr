@@ -18,7 +18,7 @@ const SignOutButton = ({}: SignOutButtonProps) => {
 			await signOut();
 		} catch (error) {
 			toast({
-				title: 'Error signing out',
+				title: 'Error signing out.',
 				description: 'Please try again later.',
 				variant: 'destructive',
 			});

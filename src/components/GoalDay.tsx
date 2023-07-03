@@ -33,7 +33,7 @@ const GoalDay = ({ goalDay, isFirst }: GoalDayProps) => {
 				{goalDay?.goals
 					.sort((a, b) => moment.utc(a.createdAt).diff(moment.utc(b.createdAt)))
 					.map((goal) => (
-						<GoalItem key={goal._id} goal={goal} />
+						<GoalItem key={goal._id} goalDay={goalDay} goal={goal} />
 					))}
 
 				{(goalDay?.goals?.length === 0 || !goalDay) && (

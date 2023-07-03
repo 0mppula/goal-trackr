@@ -1,15 +1,16 @@
 'use client';
 import { cn } from '@/lib/utils';
-import { GoalType } from '@/types/goal';
+import { GoalDayType, GoalType } from '@/types/goal';
 import { useState } from 'react';
 import GoalEditForm from './GoalEditForm';
 import GaolItemControls from './GoalItemControls';
 
 interface GoalItemProps {
+	goalDay: GoalDayType;
 	goal: GoalType;
 }
 
-const GoalItem = ({ goal }: GoalItemProps) => {
+const GoalItem = ({ goalDay, goal }: GoalItemProps) => {
 	const [editingGoal, setEditingGoal] = useState(false);
 
 	return (
@@ -26,7 +27,12 @@ const GoalItem = ({ goal }: GoalItemProps) => {
 				<GaolItemControls setEditingGoal={setEditingGoal} goal={goal} />
 			</div>
 
-			<GoalEditForm editingGoal={editingGoal} setEditingGoal={setEditingGoal} goal={goal} />
+			<GoalEditForm
+				goalDay={goalDay}
+				editingGoal={editingGoal}
+				setEditingGoal={setEditingGoal}
+				goal={goal}
+			/>
 		</>
 	);
 };
