@@ -61,7 +61,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			toast({ description: 'Goal added.' });
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(['goalDays'], { exact: true });
+			queryClient.invalidateQueries(['goalDays']);
 		},
 	});
 
@@ -107,7 +107,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			toast({ title: 'Goal added.' });
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(['goalDays'], { exact: true });
+			queryClient.invalidateQueries(['goalDays']);
 		},
 	});
 

@@ -69,7 +69,7 @@ const GoalItemControls = ({ goalDay, goal, setEditingGoal }: GoalItemControlsPro
 			toast({ description: 'Goal Deleted.' });
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(['goalDays'], { exact: true });
+			queryClient.invalidateQueries(['goalDays']);
 		},
 	});
 

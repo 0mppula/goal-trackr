@@ -68,7 +68,7 @@ const GoalEditForm = ({ goalDay, goal, editingGoal, setEditingGoal }: GoalEditFo
 			toast({ description: 'Goal edited.' });
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(['goalDays'], { exact: true });
+			queryClient.invalidateQueries(['goalDays']);
 		},
 	});
 
