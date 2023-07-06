@@ -123,7 +123,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			form.setFocus('goal');
 		},
 		onSuccess: () => {
-			toast({ title: 'Goal added.' });
+			toast({ description: 'Goal added.' });
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries(['goalDays']);
