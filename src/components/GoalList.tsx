@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import useGoalStore from '@/store/useGoalStore';
 
 const GoalList = () => {
-	const { isAddingGoalDayId, setIsAddingGoalDayId } = useGoalStore();
+	const { setIsAddingGoalDayId } = useGoalStore();
 	const { data, isLoading, isError, isSuccess } = useQuery<GetGoalDaysApiData>({
 		queryKey: ['goalDays'],
 		queryFn: getGoalDays,
