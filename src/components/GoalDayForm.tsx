@@ -73,7 +73,6 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			// @ts-ignore
 			queryClient.setQueryData(['goalDays'], context?.previousGoalDays);
 			form.setFocus('goal');
-			setAddingGoal(true);
 		},
 		onSuccess: () => {
 			toast({ description: 'Goal added.' });
