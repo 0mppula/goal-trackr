@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { toast } from './ui/use-toast';
-import useGoalStore from '@/store/useEditedGoal';
+import useGoalStore from '@/store/useGoalStore';
 
 interface GoalDayFormProps {
 	goalDay: GoalDayType | null;

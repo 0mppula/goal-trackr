@@ -1,6 +1,6 @@
 'use client';
 import { cn } from '@/lib/utils';
-import useGoalStore from '@/store/useEditedGoal';
+import useGoalStore from '@/store/useGoalStore';
 import { GoalDayType, GoalType } from '@/types/goal';
 import GoalEditForm from './GoalEditForm';
 import GoalItemControls from './GoalItemControls';

@@ -5,7 +5,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import useGoalStore from '@/store/useEditedGoal';
+import useGoalStore from '@/store/useGoalStore';
 import { GoalDayType, GoalType } from '@/types/goal';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';

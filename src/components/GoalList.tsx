@@ -8,7 +8,7 @@ import { GoalDayType } from '@/types/goal';
 import GoalDaySkeleton from './GoalDaySkeleton';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import useGoalStore from '@/store/useEditedGoal';
+import useGoalStore from '@/store/useGoalStore';
 
 const GoalList = () => {
 	const { isAddingGoalDayId, setIsAddingGoalDayId } = useGoalStore();
