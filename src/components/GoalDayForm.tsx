@@ -43,7 +43,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	};
 
 	const handleAddGoal = async (newGoalDay: GoalDayType) => {
-		await axios.post(`/api/day-goals/${goalDay?._id}/new-goal`, { newGoalDay });
+		await axios.post(`/api/day-goals/${newGoalDay?._id}/new-goal`, { newGoalDay });
 	};
 
 	const addNewGoalDayMutation = useMutation({
