@@ -1,19 +1,11 @@
 import GoalList from '@/components/GoalList';
 import getQueryClient from '@/components/rq/getQueryClient';
-import { GetGoalDaysApiData } from '@/types/goalDayApiData';
+
 import { Hydrate, dehydrate } from '@tanstack/react-query';
-
-export const getGoalDays = async ({ pageParam = 0 }) => {
-	const goals: GetGoalDaysApiData = await fetch(`/api/day-goals/get?=${pageParam}`).then((res) =>
-		res.json()
-	);
-
-	return goals;
-};
 
 const page = async () => {
 	const queryClient = getQueryClient();
-	await queryClient.prefetchQuery(['goalDays'], getGoalDays);
+	await queryClient.prefetchQuery(['goalDays']);
 	const dehydratedState = dehydrate(queryClient);
 
 	return (

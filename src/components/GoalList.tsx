@@ -1,5 +1,5 @@
 'use client';
-import { getGoalDays } from '@/app/daily/page';
+
 import { GetGoalDaysApiData } from '@/types/goalDayApiData';
 import { useQuery } from '@tanstack/react-query';
 import moment from 'moment';
@@ -9,6 +9,7 @@ import GoalDaySkeleton from './GoalDaySkeleton';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import useGoalStore from '@/store/useGoalStore';
+import { getGoalDays } from '@/app/utils/getGoalDays';
 
 const GoalList = () => {
 	const { setIsAddingGoalDayId } = useGoalStore();
