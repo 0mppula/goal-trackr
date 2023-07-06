@@ -19,7 +19,7 @@ const GoalList = () => {
 
 	const router = useRouter();
 
-	// If a user has added the first goal and leaves page reset ""
+	// If a user has added the first goal and leaves page reset "isAddingGoalDayId".
 	useEffect(() => {
 		return () => setIsAddingGoalDayId(null);
 	}, [router]);
