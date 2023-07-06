@@ -9,11 +9,6 @@ export default withAuth(
 		const isAuthPage = req.nextUrl.pathname.startsWith('/login');
 		const pathname = req.nextUrl.pathname;
 
-		console.log('token: ', token);
-		console.log('isAuth: ', isAuth);
-		console.log('isAuthPage: ', isAuthPage);
-		console.log('pathname: ', pathname);
-
 		const sensitivePaths = ['/daily'];
 
 		// If the an authenticated user is trying to access the "login" page redirect to "daily" the
