@@ -1,8 +1,9 @@
+import useGoalStore from '@/store/useEditedGoal';
 import { GoalDayType, GoalType } from '@/types/goal';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from './ui/button';
@@ -13,12 +14,11 @@ import { toast } from './ui/use-toast';
 interface GoalEditFormProps {
 	goalDay: GoalDayType;
 	goal: GoalType;
-	editingGoal: boolean;
-	setEditingGoal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const GoalEditForm = ({ goalDay, goal, editingGoal, setEditingGoal }: GoalEditFormProps) => {
+const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 	const queryClient = useQueryClient();
+	const { editedGoalId, setEditedGoalId } = useGoalStore();
 
 	const handleEditGoal = async (newGoalDay: GoalDayType) => {
 		await axios.patch(`/api/day-goals/${goalDay?._id}/edit-goal`, { newGoalDay });
@@ -47,7 +47,7 @@ const GoalEditForm = ({ goalDay, goal, editingGoal, setEditingGoal }: GoalEditFo
 
 			form.setFocus('goal');
 			form.reset({ goal: '' });
-			setEditingGoal(false);
+			setEditedGoalId(null);
 
 			return { previousGoalDays };
 		},
@@ -62,7 +62,7 @@ const GoalEditForm = ({ goalDay, goal, editingGoal, setEditingGoal }: GoalEditFo
 
 			form.setFocus('goal');
 			form.reset({ goal: goal.text });
-			setEditingGoal(false);
+			setEditedGoalId(null);
 		},
 		onSuccess: () => {
 			toast({ description: 'Goal edited.' });
@@ -84,12 +84,12 @@ const GoalEditForm = ({ goalDay, goal, editingGoal, setEditingGoal }: GoalEditFo
 	});
 
 	useEffect(() => {
-		if (editingGoal) {
+		if (editedGoalId === goal._id) {
 			setTimeout(() => form.setFocus('goal'), 200);
 
 			form.reset({ goal: goal.text });
 		}
-	}, [editingGoal]);
+	}, [editedGoalId]);
 
 	const onSubmit = async (data: z.infer<typeof FormSchema>) => {
 		const timestamp = new Date().toISOString();
@@ -97,7 +97,7 @@ const GoalEditForm = ({ goalDay, goal, editingGoal, setEditingGoal }: GoalEditFo
 		// Dont make any requests if goal text did not change.
 		if (data.goal === goal.text) {
 			form.reset({ goal: '' });
-			setEditingGoal(false);
+			setEditedGoalId(null);
 			return;
 		}
 
@@ -122,7 +122,7 @@ const GoalEditForm = ({ goalDay, goal, editingGoal, setEditingGoal }: GoalEditFo
 
 	return (
 		<>
-			{editingGoal && (
+			{editedGoalId === goal._id && (
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit(onSubmit)}
@@ -149,7 +149,7 @@ const GoalEditForm = ({ goalDay, goal, editingGoal, setEditingGoal }: GoalEditFo
 							<Button
 								variant="ghost"
 								type="button"
-								onClick={() => setEditingGoal(false)}
+								onClick={() => setEditedGoalId(null)}
 							>
 								Cancel
 							</Button>

@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { toast } from './ui/use-toast';
+import useGoalStore from '@/store/useEditedGoal';
 
 interface GoalDayFormProps {
 	goalDay: GoalDayType | null;
@@ -20,8 +21,22 @@ interface GoalDayFormProps {
 
 const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	const [addingGoal, setAddingGoal] = useState(false);
+	const { isAddingGoalDayId, setIsAddingGoalDayId, setEditedGoalId, editedGoalId } =
+		useGoalStore();
 
 	const queryClient = useQueryClient();
+
+	useEffect(() => {
+		if (isAddingGoalDayId === goalDay?._id) {
+			setAddingGoal(true);
+		}
+	}, [isAddingGoalDayId]);
+
+	useEffect(() => {
+		if (editedGoalId) {
+			setAddingGoal(false);
+		}
+	}, [editedGoalId]);
 
 	const handleAddFirstGoalDay = async (newGoalDay: GoalDayType) => {
 		await axios.post('/api/day-goals/new', newGoalDay);
@@ -44,6 +59,8 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 				return { ...oldData, goalDays: [newGoalDay, ...oldData.goalDays] };
 			});
 
+			setIsAddingGoalDayId(newGoalDay._id);
+
 			return { previousGoalDays };
 		},
 		onError: (err, newGoalDay, context) => {
@@ -56,6 +73,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			// @ts-ignore
 			queryClient.setQueryData(['goalDays'], context?.previousGoalDays);
 			form.setFocus('goal');
+			setAddingGoal(true);
 		},
 		onSuccess: () => {
 			toast({ description: 'Goal added.' });
@@ -86,6 +104,8 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 				};
 			});
 
+			setIsAddingGoalDayId(null);
+			setAddingGoal(true);
 			form.setFocus('goal');
 			form.reset({ goal: '' });
 
@@ -122,12 +142,6 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 		defaultValues: { goal: '' },
 	});
 
-	useEffect(() => {
-		if (addingGoal) {
-			form.setFocus('goal');
-		}
-	}, [addingGoal]);
-
 	const onSubmit = async (data: z.infer<typeof FormSchema>) => {
 		const session = await getSession();
 		const timestamp = new Date().toISOString();
@@ -163,20 +177,26 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		setAddingGoal(false);
+		setIsAddingGoalDayId(null);
 		form.reset({ goal: '' });
+	};
+
+	const handleAddingGoal = () => {
+		setAddingGoal(true);
+		setEditedGoalId(null);
 	};
 
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="mt-[1.5rem] w-full space-y-4">
-				{addingGoal && (
+				{(addingGoal || isAddingGoalDayId === goalDay?._id) && (
 					<FormField
 						control={form.control}
 						name="goal"
 						render={({ field }) => (
 							<FormItem>
 								<FormControl>
-									<Input placeholder="Goal description" {...field} />
+									<Input placeholder="Goal description" {...field} autoFocus />
 								</FormControl>
 								<FormMessage />
 							</FormItem>
@@ -185,7 +205,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 				)}
 
 				<div className="flex gap-4">
-					{addingGoal ? (
+					{addingGoal || isAddingGoalDayId === goalDay?._id ? (
 						<>
 							<Button variant="ghost" type="button" onClick={(e) => handleCancel(e)}>
 								Cancel
@@ -194,7 +214,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 							<Button type="submit">Add goal</Button>
 						</>
 					) : (
-						<Button onClick={() => setAddingGoal(true)}>New Goal</Button>
+						<Button onClick={handleAddingGoal}>New Goal</Button>
 					)}
 				</div>
 			</form>

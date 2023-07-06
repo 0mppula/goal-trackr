@@ -6,12 +6,23 @@ import moment from 'moment';
 import GoalDay from './GoalDay';
 import { GoalDayType } from '@/types/goal';
 import GoalDaySkeleton from './GoalDaySkeleton';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import useGoalStore from '@/store/useEditedGoal';
 
 const GoalList = () => {
+	const { isAddingGoalDayId, setIsAddingGoalDayId } = useGoalStore();
 	const { data, isLoading, isError, isSuccess } = useQuery<GetGoalDaysApiData>({
 		queryKey: ['goalDays'],
 		queryFn: getGoalDays,
 	});
+
+	const router = useRouter();
+
+	// If a user has added the first goal and leaves page reset ""
+	useEffect(() => {
+		return () => setIsAddingGoalDayId(null);
+	}, [router]);
 
 	const todayHasGoals = !!data?.goalDays?.some((goalDay: GoalDayType) =>
 		moment(new Date()).isSame(goalDay.createdAt, 'day')

@@ -5,22 +5,22 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import useGoalStore from '@/store/useEditedGoal';
 import { GoalDayType, GoalType } from '@/types/goal';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { Edit2, MoreVertical, Trash2 } from 'lucide-react';
-import React from 'react';
 import { Button } from './ui/button';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from './ui/use-toast';
 
 interface GoalItemControlsProps {
 	goalDay: GoalDayType;
 	goal: GoalType;
-	setEditingGoal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const GoalItemControls = ({ goalDay, goal, setEditingGoal }: GoalItemControlsProps) => {
+const GoalItemControls = ({ goalDay, goal }: GoalItemControlsProps) => {
 	const queryClient = useQueryClient();
+	const { editedGoalId, setEditedGoalId } = useGoalStore();
 
 	const handleGoalDelete = async () => {
 		await axios.post(`/api/day-goals/${goalDay?._id}/delete-goal`, {
@@ -73,6 +73,14 @@ const GoalItemControls = ({ goalDay, goal, setEditingGoal }: GoalItemControlsPro
 		},
 	});
 
+	const handleSetEditing = () => {
+		if (editedGoalId === goal._id) {
+			setEditedGoalId(null);
+		} else {
+			setEditedGoalId(goal._id);
+		}
+	};
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -83,10 +91,7 @@ const GoalItemControls = ({ goalDay, goal, setEditingGoal }: GoalItemControlsPro
 			</DropdownMenuTrigger>
 
 			<DropdownMenuContent align="end">
-				<DropdownMenuItem
-					className="flex gap-2"
-					onClick={() => setEditingGoal((prev) => !prev)}
-				>
+				<DropdownMenuItem className="flex gap-2" onClick={handleSetEditing}>
 					<Edit2 className="h-[1.125rem] w-[1.125rem]" />
 					<span>Edit</span>
 					<span className="sr-only">Edit Goal</span>

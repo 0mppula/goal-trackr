@@ -1,7 +1,7 @@
 'use client';
 import { cn } from '@/lib/utils';
+import useGoalStore from '@/store/useEditedGoal';
 import { GoalDayType, GoalType } from '@/types/goal';
-import { useState } from 'react';
 import GoalEditForm from './GoalEditForm';
 import GoalItemControls from './GoalItemControls';
 
@@ -11,28 +11,23 @@ interface GoalItemProps {
 }
 
 const GoalItem = ({ goalDay, goal }: GoalItemProps) => {
-	const [editingGoal, setEditingGoal] = useState(false);
+	const { editedGoalId } = useGoalStore();
 
 	return (
 		<>
 			<div
 				className={cn(
 					'flex gap-4 dark:bg-slate-950 bg-white rounded-md p-4 mt-4 border-l-4 border-slate-800 dark:border-slate-200',
-					editingGoal &&
+					editedGoalId === goal._id &&
 						'bg-slate-300 dark:bg-slate-800 border-yellow-700 dark:border-yellow-300'
 				)}
 			>
 				<p className="leading-7 grow self-center">{goal.text}</p>
 
-				<GoalItemControls setEditingGoal={setEditingGoal} goalDay={goalDay} goal={goal} />
+				<GoalItemControls goalDay={goalDay} goal={goal} />
 			</div>
 
-			<GoalEditForm
-				goalDay={goalDay}
-				editingGoal={editingGoal}
-				setEditingGoal={setEditingGoal}
-				goal={goal}
-			/>
+			<GoalEditForm goalDay={goalDay} goal={goal} />
 		</>
 	);
 };
