@@ -10,7 +10,7 @@ Authentication is done with [NextAuth.js][3]. Additionally, some routes are prot
 
 User and goals data are saved to a MongoDB data base.
 
-The UI library used in this app: [shadcn/ui][chad]
+This app was created using the [shadcn/ui][chad] UI library.
 
 Check out the [live][0] version of this app.
 
