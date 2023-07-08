@@ -17,7 +17,7 @@ const OAuthForm = ({ className, ...props }: OAuthFormProps) => {
 	const handleSignIn = async () => {
 		try {
 			setLoading(true);
-			await signIn('google');
+			await signIn('google', { callbackUrl: '/daily' });
 		} catch (error) {
 			toast({
 				title: 'Error signing in.',
