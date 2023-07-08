@@ -20,7 +20,8 @@ interface GoalItemControlsProps {
 
 const GoalItemControls = ({ goalDay, goal }: GoalItemControlsProps) => {
 	const queryClient = useQueryClient();
-	const { editedGoalId, setEditedGoalId } = useGoalStore();
+	const editedGoalId = useGoalStore((state) => state.editedGoalId);
+	const setEditedGoalId = useGoalStore((state) => state.setEditedGoalId);
 
 	const handleGoalDelete = async () => {
 		await axios.post(`/api/day-goals/${goalDay?._id}/delete-goal`, {

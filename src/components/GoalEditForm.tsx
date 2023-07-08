@@ -18,7 +18,8 @@ interface GoalEditFormProps {
 
 const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 	const queryClient = useQueryClient();
-	const { editedGoalId, setEditedGoalId } = useGoalStore();
+	const editedGoalId = useGoalStore((state) => state.editedGoalId);
+	const setEditedGoalId = useGoalStore((state) => state.setEditedGoalId);
 
 	const handleEditGoal = async (newGoalDay: GoalDayType) => {
 		await axios.patch(`/api/day-goals/${goalDay?._id}/edit-goal`, { newGoalDay });

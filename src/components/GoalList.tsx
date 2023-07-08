@@ -12,7 +12,7 @@ import useGoalStore from '@/store/useGoalStore';
 import { getGoalDays } from '@/app/utils/getGoalDays';
 
 const GoalList = () => {
-	const { setIsAddingGoalDayId } = useGoalStore();
+	const setIsAddingGoalDayId = useGoalStore((state) => state.setIsAddingGoalDayId);
 	const { data, isLoading, isError, isSuccess } = useQuery<GetGoalDaysApiData>({
 		queryKey: ['goalDays'],
 		queryFn: getGoalDays,

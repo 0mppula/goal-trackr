@@ -12,7 +12,7 @@ interface GoalItemProps {
 }
 
 const GoalItem = ({ goalDay, goal, listIndex }: GoalItemProps) => {
-	const { editedGoalId } = useGoalStore();
+	const editedGoalId = useGoalStore((state) => state.editedGoalId);
 
 	return (
 		<>
