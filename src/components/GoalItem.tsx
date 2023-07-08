@@ -8,9 +8,10 @@ import GoalItemControls from './GoalItemControls';
 interface GoalItemProps {
 	goalDay: GoalDayType;
 	goal: GoalType;
+	listIndex: number;
 }
 
-const GoalItem = ({ goalDay, goal }: GoalItemProps) => {
+const GoalItem = ({ goalDay, goal, listIndex }: GoalItemProps) => {
 	const { editedGoalId } = useGoalStore();
 
 	return (
@@ -22,7 +23,14 @@ const GoalItem = ({ goalDay, goal }: GoalItemProps) => {
 						'bg-slate-300 dark:bg-slate-800 border-yellow-700 dark:border-yellow-300'
 				)}
 			>
-				<p className="leading-7 grow self-center">{goal.text}</p>
+				<p
+					className={cn(
+						'leading-7 grow self-center relative',
+						listIndex + 1 >= 10 ? 'pl-8' : 'pl-6'
+					)}
+				>
+					<span className="absolute top-0 left-0">{listIndex + 1}.</span> {goal.text}
+				</p>
 
 				<GoalItemControls goalDay={goalDay} goal={goal} />
 			</div>
