@@ -26,11 +26,11 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 
 	const queryClient = useQueryClient();
 
-	// useEffect(() => {
-	// 	if (isAddingGoalDayId === goalDay?._id) {
-	// 		setAddingGoal(true);
-	// 	}
-	// }, [isAddingGoalDayId]);
+	useEffect(() => {
+		if (isAddingGoalDayId === goalDay?._id) {
+			setAddingGoal(true);
+		}
+	}, [isAddingGoalDayId]);
 
 	useEffect(() => {
 		if (editedGoalId) {
@@ -59,7 +59,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 				return { ...oldData, goalDays: [newGoalDay, ...oldData.goalDays] };
 			});
 
-			// setIsAddingGoalDayId(newGoalDay._id);
+			setIsAddingGoalDayId(newGoalDay._id);
 
 			return { previousGoalDays };
 		},
@@ -103,7 +103,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 				};
 			});
 
-			// setIsAddingGoalDayId(null);
+			setIsAddingGoalDayId(null);
 			setAddingGoal(true);
 			form.setFocus('goal');
 			form.reset({ goal: '' });
@@ -176,7 +176,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		setAddingGoal(false);
-		// setIsAddingGoalDayId(null);
+		setIsAddingGoalDayId(null);
 		form.reset({ goal: '' });
 	};
 
@@ -188,7 +188,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	return (
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="mt-[1.5rem] w-full space-y-4">
-				{addingGoal /* || isAddingGoalDayId === goalDay?._id */ && (
+				{(addingGoal || isAddingGoalDayId === goalDay?._id) && (
 					<FormField
 						control={form.control}
 						name="goal"
@@ -204,7 +204,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 				)}
 
 				<div className="flex gap-4">
-					{addingGoal /* || isAddingGoalDayId === goalDay?._id */ ? (
+					{addingGoal || isAddingGoalDayId === goalDay?._id ? (
 						<>
 							<Button variant="ghost" type="button" onClick={(e) => handleCancel(e)}>
 								Cancel
