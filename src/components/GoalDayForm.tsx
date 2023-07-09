@@ -15,12 +15,22 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { toast } from './ui/use-toast';
 import ButtonLoading from './ui/ButtonLoading';
+import {
+	RefetchOptions,
+	InfiniteData,
+	QueryObserverResult,
+	RefetchQueryFilters,
+} from '@tanstack/react-query';
+import { GetGoalDaysApiData } from '@/types/goalDayApiData';
 
 interface GoalDayFormProps {
 	goalDay: GoalDayType | null;
+	refetch: <TPageData>(
+		options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+	) => Promise<QueryObserverResult<InfiniteData<GetGoalDaysApiData>, unknown>>;
 }
 
-const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
+const GoalDayForm = ({ goalDay, refetch }: GoalDayFormProps) => {
 	const [addingGoal, setAddingGoal] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const { isAddingGoalDayId, setIsAddingGoalDayId, setEditedGoalId, editedGoalId } =
@@ -68,7 +78,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			toast({ description: 'Goal added.' });
 		},
 		onSettled: () => {
-			queryClient.refetchQueries();
+			refetch({ refetchPage: (page, index) => index === 0 });
 			setLoading(false);
 		},
 	});
@@ -85,12 +95,20 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 				description: 'Please try again later.',
 			});
 		},
-		onSuccess: () => {
+		onSuccess: (_, variabels) => {
+			const goalDayId = variabels._id;
+
+			refetch({
+				refetchPage: (page: GetGoalDaysApiData) => {
+					return page.goalDays?.some((gd) => gd?._id === goalDayId) || false;
+				},
+			});
+
 			toast({ description: 'Goal added.' });
 			form.reset({ goal: '' });
 		},
 		onSettled: () => {
-			queryClient.refetchQueries();
+			queryClient.invalidateQueries();
 			setLoading(false);
 			setIsAddingGoalDayId(null);
 			setAddingGoal(true);

@@ -3,13 +3,23 @@ import { GoalDayType } from '@/types/goal';
 import moment from 'moment';
 import GoalDayForm from './GoalDayForm';
 import GoalItem from './GoalItem';
+import {
+	RefetchOptions,
+	InfiniteData,
+	QueryObserverResult,
+	RefetchQueryFilters,
+} from '@tanstack/react-query';
+import { GetGoalDaysApiData } from '@/types/goalDayApiData';
 
 interface GoalDayProps {
 	goalDay: GoalDayType | null;
 	isFirst: boolean;
+	refetch: <TPageData>(
+		options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+	) => Promise<QueryObserverResult<InfiniteData<GetGoalDaysApiData>, unknown>>;
 }
 
-const GoalDay = ({ goalDay, isFirst }: GoalDayProps) => {
+const GoalDay = ({ goalDay, isFirst, refetch }: GoalDayProps) => {
 	const isToday = moment(new Date()).isSame(goalDay?.createdAt, 'day');
 
 	return (
@@ -45,7 +55,7 @@ const GoalDay = ({ goalDay, isFirst }: GoalDayProps) => {
 					<p className="leading-7 grow mt-4">No goals for this day. 🤔</p>
 				)}
 
-				<GoalDayForm goalDay={goalDay} />
+				<GoalDayForm goalDay={goalDay} refetch={refetch} />
 			</div>
 		</>
 	);

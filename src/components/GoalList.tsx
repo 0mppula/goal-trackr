@@ -14,14 +14,22 @@ import { Button } from './ui/button';
 
 const GoalList = () => {
 	const setIsAddingGoalDayId = useGoalStore((state) => state.setIsAddingGoalDayId);
-	const { data, isLoading, isError, isSuccess, fetchNextPage, isFetchingNextPage, hasNextPage } =
-		useInfiniteQuery<GetGoalDaysApiData>({
-			queryKey: ['goalDays'],
-			queryFn: getGoalDays,
-			getNextPageParam: (lastPage, pages) => {
-				return !lastPage.lastPage ? pages.length : undefined;
-			},
-		});
+	const {
+		data,
+		isLoading,
+		isError,
+		isSuccess,
+		fetchNextPage,
+		isFetchingNextPage,
+		hasNextPage,
+		refetch,
+	} = useInfiniteQuery<GetGoalDaysApiData>({
+		queryKey: ['goalDays'],
+		queryFn: getGoalDays,
+		getNextPageParam: (lastPage, pages) => {
+			return !lastPage.lastPage ? pages.length : undefined;
+		},
+	});
 
 	const router = useRouter();
 
@@ -60,13 +68,18 @@ const GoalList = () => {
 					? 'Load Newer'
 					: 'Nothing more to load'}
 			</Button>
-			{!todayHasGoals && isSuccess && <GoalDay goalDay={null} isFirst />}
+			{!todayHasGoals && isSuccess && <GoalDay goalDay={null} isFirst refetch={refetch} />}
 
 			{data?.pages
 				.flatMap((page) => [...(page?.goalDays || [])])
 				?.sort((a, b) => moment.utc(b.createdAt).diff(moment.utc(a.createdAt)))
 				?.map((goalDay, i) => (
-					<GoalDay key={i} isFirst={i === 0 && todayHasGoals} goalDay={goalDay} />
+					<GoalDay
+						key={i}
+						isFirst={i === 0 && todayHasGoals}
+						goalDay={goalDay}
+						refetch={refetch}
+					/>
 				))}
 		</div>
 	);
