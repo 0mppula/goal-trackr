@@ -116,6 +116,7 @@ const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 								<FormItem>
 									<FormControl>
 										<Input
+											disabled={loading}
 											placeholder="Goal description"
 											{...field}
 											autoFocus
