@@ -10,7 +10,7 @@ const ButtonLoading = ({ loading, children, ...props }: ButtonLoadingProps) => {
 	return (
 		<Button disabled={loading} {...props}>
 			{children}
-			{loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+			{loading && <Loader2 className="ml-2 h-[1.125rem] w-[1.125rem] animate-spin" />}
 		</Button>
 	);
 };

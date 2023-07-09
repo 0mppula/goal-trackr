@@ -7,7 +7,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Loader2, LogIn, LogOut, Menu, X } from 'lucide-react';
+import { Goal, Loader2, LogIn, LogOut, Menu, X } from 'lucide-react';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -86,6 +86,7 @@ const MobileMenu = () => {
 				<DropdownMenuContent align="end" onClick={() => setOpen(false)}>
 					{isLoggedIn && (
 						<DropdownMenuItem>
+							<Goal className="mr-2 h-[1.125rem] w-[1.125rem]" />
 							<Link href="daily">Daily Goals</Link>
 						</DropdownMenuItem>
 					)}
@@ -97,21 +98,21 @@ const MobileMenu = () => {
 					>
 						{isLoggedIn ? (
 							<div className="flex items-center">
-								<span>Sign Out</span>
 								{loading ? (
-									<Loader2 className="ml-2 h-4 w-4 animate-spin" />
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 								) : (
-									<LogOut className="ml-2 h-4 w-4" />
+									<LogOut className="mr-2 h-[1.125rem] w-[1.125rem]" />
 								)}
+								<span>Sign Out</span>
 							</div>
 						) : (
 							<div className="flex items-center">
-								<span>Sign In</span>
 								{loading ? (
-									<Loader2 className="ml-2 h-4 w-4 animate-spin" />
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 								) : (
-									<LogIn className="ml-2 h-4 w-4" />
+									<LogIn className="mr-2 h-[1.125rem] w-[1.125rem]" />
 								)}
+								<span>Sign In</span>
 							</div>
 						)}
 					</DropdownMenuItem>
