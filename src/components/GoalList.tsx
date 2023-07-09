@@ -34,10 +34,7 @@ const GoalList = () => {
 		.flatMap((page) => [...(page?.goalDays || [])])
 		?.some((goalDay: GoalDayType) => moment(new Date()).isSame(goalDay.createdAt, 'day'));
 
-	if (
-		data?.pages.flatMap((page) => [...(page?.goalDays || [])]).some((gd) => gd.error) ||
-		isError
-	)
+	if (data?.pages.some((page) => page.error) || isError)
 		return (
 			<div className="max-w-3xl mx-auto">
 				<p className="leading-7 grow mt-4 text-center">Error loading goals</p>
