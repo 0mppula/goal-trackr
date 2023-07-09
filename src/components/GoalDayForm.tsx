@@ -65,7 +65,6 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			form.setFocus('goal');
 		},
 		onSuccess: () => {
-			queryClient.refetchQueries();
 			toast({ description: 'Goal added.' });
 		},
 		onSettled: () => {
@@ -78,12 +77,6 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 		mutationFn: handleAddGoal,
 		onMutate: async (newGoalDay) => {
 			setLoading(true);
-			await queryClient.cancelQueries({ queryKey: ['goalDays'] });
-
-			setIsAddingGoalDayId(null);
-			setAddingGoal(true);
-			form.setFocus('goal');
-			form.reset({ goal: '' });
 		},
 		onError: (err, newGoalDay, context) => {
 			toast({
@@ -91,15 +84,17 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 				title: 'Error adding a new goal.',
 				description: 'Please try again later.',
 			});
-
-			form.setFocus('goal');
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries(['goalDays']);
 			toast({ description: 'Goal added.' });
+			form.reset({ goal: '' });
 		},
 		onSettled: () => {
+			queryClient.invalidateQueries(['goalDays']);
 			setLoading(false);
+			form.setFocus('goal');
+			setIsAddingGoalDayId(null);
+			setAddingGoal(true);
 		},
 	});
 
