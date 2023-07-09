@@ -3,13 +3,14 @@ import { GoalDayType, GoalType } from '@/types/goal';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from './ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from './ui/form';
 import { Input } from './ui/input';
 import { toast } from './ui/use-toast';
+import ButtonLoading from './ui/ButtonLoading';
 
 interface GoalEditFormProps {
 	goalDay: GoalDayType;
@@ -17,6 +18,7 @@ interface GoalEditFormProps {
 }
 
 const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
+	const [loading, setLoading] = useState(false);
 	const queryClient = useQueryClient();
 	const editedGoalId = useGoalStore((state) => state.editedGoalId);
 	const setEditedGoalId = useGoalStore((state) => state.setEditedGoalId);
@@ -28,6 +30,7 @@ const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 	const addGoalMutation = useMutation({
 		mutationFn: handleEditGoal,
 		onMutate: async (newGoalDay) => {
+			setLoading(true);
 			await queryClient.cancelQueries({ queryKey: ['goalDays'] });
 
 			const previousGoalDays = queryClient.getQueryData(['goalDays']);
@@ -49,6 +52,7 @@ const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 			form.setFocus('goal');
 			form.reset({ goal: '' });
 			setEditedGoalId(null);
+			setLoading(false);
 
 			return { previousGoalDays };
 		},
@@ -64,6 +68,7 @@ const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 			form.setFocus('goal');
 			form.reset({ goal: goal.text });
 			setEditedGoalId(null);
+			setLoading(false);
 		},
 		onSuccess: () => {
 			toast({ description: 'Goal edited.' });
@@ -136,6 +141,7 @@ const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 								<FormItem>
 									<FormControl>
 										<Input
+											disabled={loading}
 											placeholder="Goal description"
 											{...field}
 											autoFocus
@@ -154,7 +160,9 @@ const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 							>
 								Cancel
 							</Button>
-							<Button type="submit">Edit goal</Button>
+							<ButtonLoading loading={loading} type="submit">
+								Edit goal
+							</ButtonLoading>
 						</div>
 					</form>
 				</Form>

@@ -4,6 +4,7 @@ import { generateId } from '@/app/utils/generateId';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import useGoalStore from '@/store/useGoalStore';
 import { GoalDayType, GoalType } from '@/types/goal';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -12,15 +13,15 @@ import { getSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import ButtonLoading from './ui/ButtonLoading';
 import { toast } from './ui/use-toast';
-import useGoalStore from '@/store/useGoalStore';
-import moment from 'moment';
 
 interface GoalDayFormProps {
 	goalDay: GoalDayType | null;
 }
 
 const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
+	const [loading, setLoading] = useState(false);
 	const [addingGoal, setAddingGoal] = useState(false);
 	const { isAddingGoalDayId, setIsAddingGoalDayId, setEditedGoalId, editedGoalId } =
 		useGoalStore();
@@ -30,6 +31,8 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	useEffect(() => {
 		if (isAddingGoalDayId === goalDay?._id) {
 			setAddingGoal(true);
+
+			setTimeout(() => form.setFocus('goal'), 250);
 		}
 	}, [isAddingGoalDayId]);
 
@@ -50,6 +53,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	const addNewGoalDayMutation = useMutation({
 		mutationFn: handleAddFirstGoalDay,
 		onMutate: async (newGoalDay) => {
+			setLoading(true);
 			await queryClient.cancelQueries({ queryKey: ['goalDays'] });
 
 			const previousGoalDays = queryClient.getQueryData(['goalDays']);
@@ -74,11 +78,13 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			// @ts-ignore
 			queryClient.setQueryData(['goalDays'], context?.previousGoalDays);
 			form.setFocus('goal');
+			setLoading(false);
 		},
 		onSuccess: () => {
 			toast({ description: 'Goal added.' });
 		},
 		onSettled: () => {
+			setLoading(false);
 			queryClient.invalidateQueries(['goalDays']);
 		},
 	});
@@ -86,6 +92,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	const addGoalMutation = useMutation({
 		mutationFn: handleAddGoal,
 		onMutate: async (newGoalDay) => {
+			setLoading(true);
 			await queryClient.cancelQueries({ queryKey: ['goalDays'] });
 
 			const previousGoalDays = queryClient.getQueryData(['goalDays']);
@@ -108,6 +115,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			setAddingGoal(true);
 			form.setFocus('goal');
 			form.reset({ goal: '' });
+			setLoading(false);
 
 			return { previousGoalDays };
 		},
@@ -122,6 +130,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			queryClient.setQueryData(['goalDays'], context?.previousGoalDays);
 
 			form.setFocus('goal');
+			setLoading(false);
 		},
 		onSuccess: () => {
 			toast({ description: 'Goal added.' });
@@ -196,7 +205,12 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 						render={({ field }) => (
 							<FormItem>
 								<FormControl>
-									<Input placeholder="Goal description" {...field} autoFocus />
+									<Input
+										disabled={loading}
+										placeholder="Goal description"
+										{...field}
+										autoFocus
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
@@ -211,10 +225,14 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 								Cancel
 							</Button>
 
-							<Button type="submit">Add goal</Button>
+							<ButtonLoading type="submit" loading={loading}>
+								Add goal
+							</ButtonLoading>
 						</>
 					) : (
-						<Button onClick={handleAddingGoal}>New Goal</Button>
+						<ButtonLoading onClick={handleAddingGoal} loading={loading}>
+							New Goal
+						</ButtonLoading>
 					)}
 				</div>
 			</form>
