@@ -77,30 +77,13 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 	const addGoalMutation = useMutation({
 		mutationFn: handleAddGoal,
 		onMutate: async (newGoalDay) => {
+			setLoading(true);
 			await queryClient.cancelQueries({ queryKey: ['goalDays'] });
-
-			const previousGoalDays = queryClient.getQueryData(['goalDays']);
-
-			// @ts-ignore
-			queryClient.setQueriesData(['goalDays'], (oldData) => {
-				// @ts-ignore
-				return {
-					// @ts-ignore
-					...oldData,
-					goalDays: [
-						newGoalDay,
-						// @ts-ignore
-						...oldData.goalDays.filter((gd) => gd._id !== newGoalDay._id),
-					],
-				};
-			});
 
 			setIsAddingGoalDayId(null);
 			setAddingGoal(true);
 			form.setFocus('goal');
 			form.reset({ goal: '' });
-
-			return { previousGoalDays };
 		},
 		onError: (err, newGoalDay, context) => {
 			toast({
@@ -109,16 +92,14 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 				description: 'Please try again later.',
 			});
 
-			// @ts-ignore
-			queryClient.setQueryData(['goalDays'], context?.previousGoalDays);
-
 			form.setFocus('goal');
 		},
 		onSuccess: () => {
+			queryClient.invalidateQueries(['goalDays']);
 			toast({ description: 'Goal added.' });
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(['goalDays']);
+			setLoading(false);
 		},
 	});
 
