@@ -3,13 +3,14 @@ import { GoalDayType, GoalType } from '@/types/goal';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from './ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from './ui/form';
 import { Input } from './ui/input';
 import { toast } from './ui/use-toast';
+import ButtonLoading from './ui/ButtonLoading';
 
 interface GoalEditFormProps {
 	goalDay: GoalDayType;
@@ -17,6 +18,7 @@ interface GoalEditFormProps {
 }
 
 const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
+	const [loading, setLoading] = useState(false);
 	const queryClient = useQueryClient();
 	const editedGoalId = useGoalStore((state) => state.editedGoalId);
 	const setEditedGoalId = useGoalStore((state) => state.setEditedGoalId);
@@ -28,29 +30,7 @@ const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 	const addGoalMutation = useMutation({
 		mutationFn: handleEditGoal,
 		onMutate: async (newGoalDay) => {
-			await queryClient.cancelQueries({ queryKey: ['goalDays'] });
-
-			const previousGoalDays = queryClient.getQueryData(['goalDays']);
-
-			// @ts-ignore
-			queryClient.setQueriesData(['goalDays'], (oldData) => {
-				// @ts-ignore
-				return {
-					// @ts-ignore
-					...oldData,
-					goalDays: [
-						newGoalDay,
-						// @ts-ignore
-						...oldData.goalDays.filter((gd) => gd._id !== newGoalDay._id),
-					],
-				};
-			});
-
-			form.setFocus('goal');
-			form.reset({ goal: '' });
-			setEditedGoalId(null);
-
-			return { previousGoalDays };
+			setLoading(true);
 		},
 		onError: (err, newGoalDay, context) => {
 			toast({
@@ -59,17 +39,17 @@ const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 				description: 'Please try again later.',
 			});
 
-			queryClient.setQueryData(['goalDays'], context?.previousGoalDays);
-
-			form.setFocus('goal');
 			form.reset({ goal: goal.text });
-			setEditedGoalId(null);
 		},
 		onSuccess: () => {
 			toast({ description: 'Goal edited.' });
+			form.reset({ goal: '' });
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries(['goalDays']);
+			setLoading(false);
+			setEditedGoalId(null);
+			form.setFocus('goal');
 		},
 	});
 
@@ -154,7 +134,9 @@ const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 							>
 								Cancel
 							</Button>
-							<Button type="submit">Edit goal</Button>
+							<ButtonLoading loading={loading} type="submit">
+								Edit goal
+							</ButtonLoading>
 						</div>
 					</form>
 				</Form>

@@ -9,7 +9,8 @@ import useGoalStore from '@/store/useGoalStore';
 import { GoalDayType, GoalType } from '@/types/goal';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { Edit2, MoreVertical, Trash2 } from 'lucide-react';
+import { Edit2, Loader2, MoreVertical, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 import { Button } from './ui/button';
 import { toast } from './ui/use-toast';
 
@@ -19,6 +20,9 @@ interface GoalItemControlsProps {
 }
 
 const GoalItemControls = ({ goalDay, goal }: GoalItemControlsProps) => {
+	const [loading, setLoading] = useState(false);
+	const [open, setOpen] = useState(false);
+
 	const queryClient = useQueryClient();
 	const editedGoalId = useGoalStore((state) => state.editedGoalId);
 	const setEditedGoalId = useGoalStore((state) => state.setEditedGoalId);
@@ -32,30 +36,7 @@ const GoalItemControls = ({ goalDay, goal }: GoalItemControlsProps) => {
 	const deleteGoalMutation = useMutation({
 		mutationFn: handleGoalDelete,
 		onMutate: async () => {
-			await queryClient.cancelQueries({ queryKey: ['goalDays'] });
-
-			const previousGoalDays = queryClient.getQueryData(['goalDays']);
-
-			const newGoalDay = {
-				...goalDay,
-				goals: [...goalDay.goals].filter((g) => g._id !== goal._id),
-			};
-
-			// @ts-ignore
-			queryClient.setQueriesData(['goalDays'], (oldData) => {
-				// @ts-ignore
-				return {
-					// @ts-ignore
-					...oldData,
-					goalDays: [
-						newGoalDay,
-						// @ts-ignore
-						...oldData.goalDays.filter((gd) => gd._id !== newGoalDay._id),
-					],
-				};
-			});
-
-			return { previousGoalDays };
+			setLoading(true);
 		},
 		onError: (err, newGoalDay, context) => {
 			toast({
@@ -63,14 +44,14 @@ const GoalItemControls = ({ goalDay, goal }: GoalItemControlsProps) => {
 				title: 'Error deleting your goal.',
 				description: 'Please try again later.',
 			});
-
-			queryClient.setQueryData(['goalDays'], context?.previousGoalDays);
 		},
 		onSuccess: () => {
 			toast({ description: 'Goal Deleted.' });
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries(['goalDays']);
+			setLoading(false);
+			setOpen(false);
 		},
 	});
 
@@ -83,8 +64,8 @@ const GoalItemControls = ({ goalDay, goal }: GoalItemControlsProps) => {
 	};
 
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger asChild>
+		<DropdownMenu open={open} onOpenChange={(state) => setOpen(state)}>
+			<DropdownMenuTrigger asChild onClick={() => setOpen(!open)}>
 				<Button variant="ghost" size="sm">
 					<MoreVertical className="h-[1.125rem] w-[1.125rem]" />
 					<span className="sr-only">Open goal menu</span>
@@ -92,7 +73,11 @@ const GoalItemControls = ({ goalDay, goal }: GoalItemControlsProps) => {
 			</DropdownMenuTrigger>
 
 			<DropdownMenuContent align="end">
-				<DropdownMenuItem className="flex gap-2" onClick={handleSetEditing}>
+				<DropdownMenuItem
+					className="flex gap-2"
+					onClick={handleSetEditing}
+					disabled={loading}
+				>
 					<Edit2 className="h-[1.125rem] w-[1.125rem]" />
 					<span>Edit</span>
 					<span className="sr-only">Edit Goal</span>
@@ -101,8 +86,14 @@ const GoalItemControls = ({ goalDay, goal }: GoalItemControlsProps) => {
 				<DropdownMenuItem
 					className="flex gap-2 focus:bg-destructive"
 					onClick={() => deleteGoalMutation.mutate()}
+					disabled={loading}
 				>
-					<Trash2 className="h-[1.125rem] w-[1.125rem]" />
+					{loading ? (
+						<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+					) : (
+						<Trash2 className="h-[1.125rem] w-[1.125rem]" />
+					)}
+
 					<span>Delete</span>
 					<span className="sr-only">Delete Goal</span>
 				</DropdownMenuItem>
