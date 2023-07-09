@@ -5,9 +5,7 @@ import { useState } from 'react';
 import ButtonLoading from './ButtonLoading';
 import { useToast } from './use-toast';
 
-interface SignOutButtonProps {}
-
-const SignOutButton = ({}: SignOutButtonProps) => {
+const SignOutButton = () => {
 	const [loading, setLoading] = useState(false);
 
 	const { toast } = useToast();
@@ -24,6 +22,7 @@ const SignOutButton = ({}: SignOutButtonProps) => {
 			});
 		}
 	};
+
 	return (
 		<ButtonLoading onClick={handlesignOut} disabled={loading}>
 			Sign Out

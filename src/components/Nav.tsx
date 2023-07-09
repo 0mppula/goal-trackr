@@ -1,6 +1,7 @@
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { getServerSession } from 'next-auth';
 import Link from 'next/link';
+import MobileMenu from './MobileMenu';
 import ThemeToggler from './ThemeToggler';
 import SignInButton from './ui/SignInButton';
 import SignOutButton from './ui/SignOutButton';
@@ -16,20 +17,24 @@ const Nav = async () => {
 					<Link href="/">GoalTrackr</Link>
 				</Button>
 
-				<div className="flex items-center gap-4">
+				<div className="flex items-center gap-2 md:gap-4">
 					<ThemeToggler />
 
-					{session ? (
-						<>
-							<Button variant="ghost" asChild>
-								<Link href="daily">Daily Goals</Link>
-							</Button>
+					<div className="hidden md:flex items-center gap-4">
+						{session ? (
+							<>
+								<Button variant="ghost" asChild>
+									<Link href="daily">Daily Goals</Link>
+								</Button>
 
-							<SignOutButton />
-						</>
-					) : (
-						<SignInButton />
-					)}
+								<SignOutButton />
+							</>
+						) : (
+							<SignInButton />
+						)}
+					</div>
+
+					<MobileMenu />
 				</div>
 			</div>
 		</nav>
