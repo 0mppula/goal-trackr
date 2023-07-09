@@ -9,6 +9,10 @@ import { z } from 'zod';
 import { authOptions } from '../auth/[...nextauth]';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<GetGoalDaysApiData>) => {
+	const cursor = req.query.cursor || 1;
+	const pageSize = 2;
+	const parsedCursor = parseInt(String(cursor), 10);
+
 	try {
 		const user = await getServerSession(req, res, authOptions);
 
@@ -21,9 +25,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<GetGoalDaysApiD
 
 		await connectToDB();
 
-		const goalDays = await GoalDay.find<GoalDayType>({ userId: user.user.id }).sort({
-			createdAt: -1,
-		});
+		const goalDays = await GoalDay.find<GoalDayType>({ userId: user.user.id })
+			.skip(parsedCursor * pageSize)
+			.limit(pageSize)
+			.sort({ createdAt: -1 });
 
 		return res.status(200).json({ error: null, goalDays });
 	} catch (error) {
