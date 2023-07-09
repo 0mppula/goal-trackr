@@ -163,7 +163,12 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 						render={({ field }) => (
 							<FormItem>
 								<FormControl>
-									<Input placeholder="Goal description" {...field} autoFocus />
+									<Input
+										disabled={loading}
+										placeholder="Goal description"
+										{...field}
+										autoFocus
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
