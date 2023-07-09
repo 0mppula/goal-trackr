@@ -108,7 +108,6 @@ const GoalDayForm = ({ goalDay, refetch }: GoalDayFormProps) => {
 			form.reset({ goal: '' });
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries();
 			setLoading(false);
 			setIsAddingGoalDayId(null);
 			setAddingGoal(true);
