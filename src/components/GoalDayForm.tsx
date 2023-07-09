@@ -62,7 +62,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 				description: 'Please try again later.',
 			});
 
-			form.setFocus('goal');
+			setTimeout(() => form.setFocus('goal'), 300);
 		},
 		onSuccess: () => {
 			toast({ description: 'Goal added.' });
@@ -92,9 +92,9 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 		onSettled: () => {
 			queryClient.invalidateQueries(['goalDays']);
 			setLoading(false);
-			form.setFocus('goal');
 			setIsAddingGoalDayId(null);
 			setAddingGoal(true);
+			setTimeout(() => form.setFocus('goal'), 300);
 		},
 	});
 
@@ -164,10 +164,10 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 							<FormItem>
 								<FormControl>
 									<Input
-										disabled={loading}
 										placeholder="Goal description"
 										{...field}
 										autoFocus
+										disabled={loading}
 									/>
 								</FormControl>
 								<FormMessage />

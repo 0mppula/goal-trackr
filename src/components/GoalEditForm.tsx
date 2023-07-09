@@ -40,6 +40,7 @@ const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 			});
 
 			form.reset({ goal: goal.text });
+			setTimeout(() => form.setFocus('goal'), 300);
 		},
 		onSuccess: () => {
 			toast({ description: 'Goal edited.' });
@@ -49,7 +50,6 @@ const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 			queryClient.invalidateQueries(['goalDays']);
 			setLoading(false);
 			setEditedGoalId(null);
-			form.setFocus('goal');
 		},
 	});
 
@@ -116,10 +116,10 @@ const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 								<FormItem>
 									<FormControl>
 										<Input
-											disabled={loading}
 											placeholder="Goal description"
 											{...field}
 											autoFocus
+											disabled={loading}
 										/>
 									</FormControl>
 									<FormMessage />
