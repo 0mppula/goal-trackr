@@ -68,7 +68,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			toast({ description: 'Goal added.' });
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(['goalDays']);
+			queryClient.refetchQueries();
 			setLoading(false);
 		},
 	});
@@ -90,7 +90,7 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 			form.reset({ goal: '' });
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(['goalDays']);
+			queryClient.refetchQueries();
 			setLoading(false);
 			setIsAddingGoalDayId(null);
 			setAddingGoal(true);

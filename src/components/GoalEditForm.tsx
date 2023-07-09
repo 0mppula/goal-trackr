@@ -47,7 +47,7 @@ const GoalEditForm = ({ goalDay, goal }: GoalEditFormProps) => {
 			form.reset({ goal: '' });
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(['goalDays']);
+			queryClient.refetchQueries();
 			setLoading(false);
 			setEditedGoalId(null);
 		},

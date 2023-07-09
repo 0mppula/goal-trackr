@@ -49,7 +49,7 @@ const GoalItemControls = ({ goalDay, goal }: GoalItemControlsProps) => {
 			toast({ description: 'Goal Deleted.' });
 		},
 		onSettled: () => {
-			queryClient.invalidateQueries(['goalDays']);
+			queryClient.refetchQueries();
 			setLoading(false);
 			setOpen(false);
 		},
