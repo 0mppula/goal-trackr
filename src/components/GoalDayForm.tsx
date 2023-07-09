@@ -14,6 +14,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { toast } from './ui/use-toast';
 import useGoalStore from '@/store/useGoalStore';
+import moment from 'moment';
 
 interface GoalDayFormProps {
 	goalDay: GoalDayType | null;
@@ -158,8 +159,8 @@ const GoalDayForm = ({ goalDay }: GoalDayFormProps) => {
 				_id: goalDay ? goalDay._id : generateId(),
 				userId: session?.user.id,
 				goals: [...(goalDay?.goals || []), newGoal],
-				goalTarget: 0,
-				createdAt: timestamp,
+				goalTarget: goalDay ? goalDay.goalTarget : 0,
+				createdAt: goalDay ? goalDay.createdAt : timestamp,
 				updatedAt: timestamp,
 			};
 
