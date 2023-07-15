@@ -2,20 +2,18 @@
 
 ## What is GoalTrackr?
 
-GoalTrackr is a fullstack Next.js 13 application allowing authenticated users to list and track their daily goals.
+GoalTrackr is a fullstack Next.js 13 application created using the [shadcn/ui][chad] library. The app allows authenticated users to list and track their daily goals.
 
-The application supports optimistic rendering with [TanStack Query][1] and manages global state with [Zustand][2].
+Global state is managed with [Zustand][Zustand], database queries are done using [TanStack Query][TanStack Query] and authentication is managed with NextAuth.js.
 
-Authentication is done with [NextAuth.js][3]. Additionally, some routes are protected from unauthorized users and users are redirected to the daily goals page after initial authentication.
+Additionally, some routes are protected from unauthorized users. Users are redirected to the daily goals page after initial authentication.
 
-User and goals data are saved to a MongoDB data base.
+User and app data is saved to a MongoDB data base.
 
-This app was created using the [shadcn/ui][chad] UI library.
+Check out the [live][live] version of this app.
 
-Check out the [live][0] version of this app.
-
-[0]: https://goaltrackr.vercel.app/
-[1]: https://tanstack.com/query/
-[2]: https://www.npmjs.com/package/zustand
-[3]: https://next-auth.js.org/
+[live]: https://goaltrackr.vercel.app/
+[TanStack Query]: https://tanstack.com/query/
+[Zustand]: https://www.npmjs.com/package/zustand
+[NextAuth]: https://next-auth.js.org/
 [chad]: https://ui.shadcn.com/
