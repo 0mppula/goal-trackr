@@ -5,6 +5,8 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import { Inter } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/react';
+
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -28,7 +30,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 						<Nav />
 						<Toaster />
 
-						<Providers>{children}</Providers>
+						<Providers>
+							{children}
+							<Analytics />
+						</Providers>
 					</SessionProvider>
 				</ThemeProvider>
 			</body>
